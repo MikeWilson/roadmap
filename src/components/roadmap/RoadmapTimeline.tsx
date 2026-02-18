@@ -150,7 +150,7 @@ function StepRow({
 
       {/* Sub-steps (branches) */}
       {branches.length > 0 && (
-        <div className="ml-[19px] border-l border-zinc-200 pl-4 pt-3 pb-4 sm:pl-8 dark:border-zinc-700">
+        <div className="ml-[19px] border-l border-zinc-200 pl-6 pt-3 pb-4 sm:pl-8 dark:border-zinc-700">
           <div className="flex flex-col gap-2.5">
             {branches.map((branch, j) => (
               <div key={branch.id} className="group/branch flex items-start gap-3">
