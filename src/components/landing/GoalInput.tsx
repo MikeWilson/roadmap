@@ -195,34 +195,31 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               {goal}
             </p>
-            <div
-              className={`mt-2 transition-all duration-500 ease-out ${
-                isExpanding
-                  ? "opacity-0 blur-sm"
-                  : isRevealed
-                    ? "opacity-100 blur-0"
-                    : "opacity-0 blur-sm"
-              }`}
-            >
+            <div className="relative mt-2 min-h-[4.5rem]">
+              <div
+                className={`absolute inset-0 flex items-center rounded-xl border border-zinc-300 bg-white px-4 transition-opacity duration-300 dark:border-zinc-700 dark:bg-zinc-900 ${
+                  isExpanding ? "animate-pulse opacity-100" : "pointer-events-none opacity-0"
+                }`}
+              >
+                <div className="w-full space-y-2.5">
+                  <div className="h-3.5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-700" />
+                  <div className="h-3.5 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
+                </div>
+              </div>
               <textarea
                 ref={descriptionCallbackRef}
                 value={goalDescription}
                 onChange={(e) => setGoalDescription(e.target.value)}
-                rows={1}
-                className="w-full resize-none overflow-hidden rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                rows={2}
+                className={`w-full resize-none overflow-hidden rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 transition-all duration-500 ease-out placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 ${
+                  isRevealed && !isExpanding ? "opacity-100 blur-0" : "opacity-0 blur-sm"
+                }`}
               />
             </div>
           </div>
         </div>
 
         <div className="mt-6 flex gap-3">
-          <button
-            onClick={handleGenerate}
-            disabled={!goal.trim() || isExpanding}
-            className="flex-1 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
-          >
-            Generate Roadmap
-          </button>
           <button
             onClick={() => {
               setCurrentState("");
@@ -232,6 +229,13 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             className="rounded-xl border border-zinc-300 px-6 py-3 font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
             Skip
+          </button>
+          <button
+            onClick={handleGenerate}
+            disabled={!goal.trim() || isExpanding}
+            className="flex-1 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            Generate Roadmap
           </button>
         </div>
       </div>
