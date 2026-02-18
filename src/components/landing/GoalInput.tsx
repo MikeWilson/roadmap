@@ -140,7 +140,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   if (step === 2) {
     return (
-      <div className="mt-10 w-full max-w-xl">
+      <div className="mt-4 w-full max-w-xl sm:mt-10">
         <button
           onClick={() => {
             setStep(1);
@@ -273,11 +273,11 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           </div>
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6">
           <button
             onClick={handleGenerate}
             disabled={!goal.trim() || isExpanding}
-            className="flex-1 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className="w-full rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
             Generate Roadmap
           </button>
@@ -308,7 +308,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         <span className="mx-1 text-zinc-300 dark:text-zinc-600">···</span>
         <span className="select-none text-4xl opacity-60">🪦</span>
       </button>
-      <form onSubmit={handleGoalSubmit} className="flex gap-3">
+      <form onSubmit={handleGoalSubmit} className="flex flex-col gap-3 sm:flex-row">
         <input
           type="text"
           value={goal}
