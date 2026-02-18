@@ -51,9 +51,12 @@ function pickRandom(pool: string[], count: number, exclude: string[]): string[] 
   return result;
 }
 
+const DEFAULT_EMOJIS = EMOJIS.slice(0, 3);
+
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
-  const [emojis, setEmojis] = useState(() => pickRandom(EMOJIS, 3, []));
+  const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
   const [emojiKey, setEmojiKey] = useState(0);
+  const hasMounted = useRef(false);
   const [goal, setGoal] = useState("");
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
@@ -67,6 +70,14 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const router = useRouter();
   const { apiKey } = useApiKey();
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      setEmojis(pickRandom(EMOJIS, 3, []));
+      setEmojiKey((k) => k + 1);
+    }
+  }, []);
 
   const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
     if (!el) return;
