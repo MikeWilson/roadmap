@@ -17,6 +17,44 @@ function searchUrl(action: string) {
   return `https://www.google.com/search?q=${encodeURIComponent(action)}`;
 }
 
+/* ── Destination icons ── */
+
+function YouTubeIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="shrink-0">
+      <rect x="1" y="3" width="12" height="8" rx="2" opacity="0.2" />
+      <path d="M5.5 5v4l3.5-2z" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0">
+      <circle cx="5.5" cy="5.5" r="3.5" />
+      <path d="M8.5 8.5l3 3" />
+    </svg>
+  );
+}
+
+function ExternalIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <path d="M3.5 1h5.5v5.5M8.5 1.5 3 7" />
+    </svg>
+  );
+}
+
+function ActionBadge({ action }: { action: string }) {
+  const isYouTube = action.toLowerCase().includes("youtube");
+  return (
+    <span className="flex shrink-0 items-center gap-1 text-zinc-300 opacity-0 transition-opacity group-hover/card:opacity-100 dark:text-zinc-600">
+      {isYouTube ? <YouTubeIcon /> : <SearchIcon />}
+      <ExternalIcon />
+    </span>
+  );
+}
+
 interface RoadmapTimelineProps {
   entries: SpineEntry[];
   title: string;
@@ -65,9 +103,10 @@ export function RoadmapTimeline({
             >
               {/* Vertical line - runs behind everything */}
               {!isLast && (
-                <div className="absolute left-[19px] top-10 bottom-0 w-px bg-zinc-200 dark:bg-zinc-700" />
+                <div className={`absolute left-[19px] bottom-0 z-0 w-px bg-zinc-200 dark:bg-zinc-700 ${i === 0 ? "top-10" : "top-0"}`} />
               )}
 
+              <div className="relative z-10">
               {isMilestone ? (
                 <MilestoneRow
                   label={entry.node.label}
@@ -83,6 +122,7 @@ export function RoadmapTimeline({
                   branches={entry.branches}
                 />
               )}
+              </div>
             </div>
           );
         })}
@@ -114,38 +154,37 @@ function StepRow({
   return (
     <div>
       {/* Step header */}
-      <div className="group/step flex items-start gap-4">
+      <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-100 dark:text-zinc-900">
           {step}
         </div>
         <div className="min-w-0 pt-1.5">
-          <div className="flex items-baseline gap-2">
-            <h3 className="shrink truncate text-base font-semibold text-zinc-900 dark:text-zinc-100">
-              {label}
-            </h3>
-            {action && (
-              <a
-                href={searchUrl(action)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/step:w-auto group-hover/step:opacity-100 hover:underline sm:inline dark:text-indigo-400"
-              >
-                → {action}
-              </a>
-            )}
-          </div>
-          <p className="mt-0.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {description}
-          </p>
-          {action && (
+          {action ? (
             <a
               href={searchUrl(action)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1.5 inline-block text-sm text-indigo-600 hover:underline sm:hidden dark:text-indigo-400"
+              className="group/card flex items-center gap-2 rounded-xl -mx-3 px-3 -my-1 py-1 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
             >
-              → {action}
+              <div className="min-w-0 flex-1">
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  {label}
+                </h3>
+                <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  {description}
+                </p>
+              </div>
+              <ActionBadge action={action} />
             </a>
+          ) : (
+            <>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                {label}
+              </h3>
+              <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
+                {description}
+              </p>
+            </>
           )}
         </div>
       </div>
@@ -157,7 +196,7 @@ function StepRow({
             {branches.map((branch, j) => (
               <div
                 key={branch.id}
-                className="group/branch flex items-start gap-3"
+                className="flex items-start gap-3"
                 style={{ animation: `step-fade-in 0.5s ease-out ${(j + 1) * 0.06}s both` }}
               >
                 <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500">
@@ -165,33 +204,32 @@ function StepRow({
                   {SUBSTEP_LETTERS[j]}
                 </span>
                 <div className="min-w-0">
-                  <div className="flex items-baseline gap-2">
-                    <span className="shrink truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      {branch.label}
-                    </span>
-                    {branch.action && (
-                      <a
-                        href={searchUrl(branch.action)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/branch:w-auto group-hover/branch:opacity-100 hover:underline sm:inline dark:text-indigo-400"
-                      >
-                        → {branch.action}
-                      </a>
-                    )}
-                  </div>
-                  <span className="text-sm text-zinc-400 dark:text-zinc-500">
-                    {branch.description}
-                  </span>
-                  {branch.action && (
+                  {branch.action ? (
                     <a
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-1 inline-block text-sm text-indigo-600 hover:underline sm:hidden dark:text-indigo-400"
+                      className="group/card flex items-center gap-2 rounded-lg -mx-2 px-2 -my-0.5 py-0.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
                     >
-                      → {branch.action}
+                      <span className="min-w-0 flex-1">
+                        <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
+                          {branch.label}
+                        </span>
+                        <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
+                          {branch.description}
+                        </span>
+                      </span>
+                      <ActionBadge action={branch.action} />
                     </a>
+                  ) : (
+                    <>
+                      <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
+                        {branch.label}
+                      </span>
+                      <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
+                        {branch.description}
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
@@ -215,7 +253,7 @@ function MilestoneRow({
   action?: string;
 }) {
   return (
-    <div className="group/milestone flex flex-col sm:flex-row sm:items-start sm:gap-4 py-2">
+    <div className="flex flex-col sm:flex-row sm:items-start sm:gap-4 py-2">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400">
           &#9733;
@@ -224,37 +262,41 @@ function MilestoneRow({
           Milestone
         </span>
       </div>
-      <div className="ml-14 mt-2 min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
-        <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
-          Milestone
+      {action ? (
+        <a
+          href={searchUrl(action)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group/card ml-14 mt-2 block min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 transition-colors hover:bg-emerald-100/80 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
+                Milestone
+              </div>
+              <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
+                {label}
+              </div>
+              <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
+                {description}
+              </p>
+            </div>
+            <ActionBadge action={action} />
+          </div>
+        </a>
+      ) : (
+        <div className="ml-14 mt-2 min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
+          <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
+            Milestone
+          </div>
+          <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
+            {label}
+          </div>
+          <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
+            {description}
+          </p>
         </div>
-        <div className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
-          {label}
-        </div>
-        {action && (
-          <a
-            href={searchUrl(action)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 block text-sm text-emerald-600 hover:underline sm:hidden dark:text-emerald-400"
-          >
-            → {action}
-          </a>
-        )}
-        <p className="mt-0.5 text-xs text-emerald-700/60 dark:text-emerald-400/60">
-          {description}
-        </p>
-        {action && (
-          <a
-            href={searchUrl(action)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-emerald-600 opacity-0 transition-opacity duration-200 group-hover/milestone:w-auto group-hover/milestone:opacity-100 hover:underline sm:inline dark:text-emerald-400"
-          >
-            → {action}
-          </a>
-        )}
-      </div>
+      )}
     </div>
   );
 }
