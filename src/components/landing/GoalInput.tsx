@@ -281,6 +281,110 @@ function pickRandom(pool: string[], count: number, exclude: string[]): string[] 
   return result;
 }
 
+// Themed emoji pools for pill hover — emojis adapt to match the hovered suggestion
+const THEME_POOLS: Record<string, string[]> = {
+  water: ["🐟", "🐠", "🦈", "🐋", "🐬", "🌊", "⛵", "🚣", "🐚", "🪸", "🦑", "🐡", "🦞", "🏄", "🤿", "🎣", "🚤"],
+  run: ["🏃", "👟", "🏅", "🥇", "💨", "🏁", "🎽", "⏱️", "🏆", "💪", "🦵", "🥈"],
+  music: ["🎵", "🎶", "🎸", "🎹", "🎻", "🥁", "🎷", "🎺", "🎤", "🎧", "🎼", "🪕", "🪗", "🪈"],
+  cook: ["🍳", "👨‍🍳", "🔪", "🥘", "🍽️", "🥄", "🍲", "🥢", "🧑‍🍳", "🫕", "🍖", "🧈", "🥣", "♨️", "🫙"],
+  bake: ["🍞", "🥐", "🧁", "🍰", "🥧", "🎂", "🍪", "🥖", "🧇", "🫓", "🧑‍🍳"],
+  drink: ["🍺", "🍷", "☕", "🥃", "🫖", "🍶", "🥂", "🍸", "🧋", "🍹", "🫗", "🍾", "🥤"],
+  tech: ["💻", "🖥️", "📱", "⌨️", "🤖", "💾", "📡", "🔌", "🧬", "📊", "💡", "🔋", "🖱️"],
+  garden: ["🌱", "🌿", "🍀", "🌳", "🌻", "🌸", "🪴", "🐝", "🦋", "🐛", "🌼", "🪻", "🌺", "☘️", "🌲"],
+  art: ["🎨", "🖌️", "✏️", "🖍️", "🖼️", "🏺", "✂️", "🪡", "🧵", "📐", "🪆", "🧶", "💎", "🎭"],
+  build: ["🔨", "🔧", "🪚", "⚒️", "🏗️", "🪵", "🧱", "📐", "🪜", "🏠", "🛠️", "⚙️", "🔩", "🪛"],
+  write: ["✍️", "📝", "📖", "📚", "🖊️", "📰", "🎬", "📺", "🎙️", "📻", "🖋️", "📜"],
+  advent: ["🏔️", "⛰️", "🏕️", "🌄", "🗻", "🧭", "🗺️", "🥾", "🎒", "⛺", "🌅", "🧗", "🏜️"],
+  biz: ["💼", "📈", "💰", "🏪", "🛍️", "📦", "🤝", "💡", "📋", "🏷️", "🧾", "🛒"],
+  animal: ["🐶", "🐱", "🐴", "🐔", "🦜", "🐦", "🐕", "🐾", "🐣", "🐰", "🦮", "🐾"],
+  farm: ["🌾", "🚜", "🐓", "🐑", "🐐", "🥛", "🧈", "🍯", "🐝", "🌽", "🥚", "🐄"],
+  combat: ["🥊", "🤺", "🏹", "🥋", "⚔️", "🛡️", "💪", "🎯", "🤼", "🦾", "👊", "🥷"],
+  lang: ["🗣️", "💬", "🌍", "🌏", "✈️", "🗺️", "📝", "🎓", "🌐", "📚", "💭", "🗨️"],
+  game: ["♟️", "🎲", "🎯", "🏆", "🧩", "🎮", "🃏", "🎳", "🏓", "⛳", "🎾", "🎱"],
+  ride: ["🚗", "🏍️", "🛹", "🚲", "🏎️", "🛞", "⛽", "🔧", "🏁", "🛻", "🛵", "🚙"],
+  science: ["🔬", "🔭", "🧪", "🧬", "⚗️", "🌌", "⭐", "🪐", "🧠", "💡", "🔮", "📡"],
+  perform: ["🎤", "🎭", "💃", "🕺", "🤹", "🎪", "🎶", "👯", "🎬", "📺", "🎙️", "🪄"],
+  zen: ["🧘", "🕉️", "🙏", "🪷", "📿", "💆", "🌸", "🫧", "☮️", "🍃"],
+  ice: ["❄️", "🧊", "⛸️", "⛷️", "🏂", "🌨️", "☃️", "🎿", "🏔️", "🦌", "⛰️"],
+};
+
+// Map each suggestion emoji → theme key
+const PILL_THEME: Record<string, string> = {
+  // water
+  "🎣": "water", "🤿": "water", "🏄": "water", "⛵": "water", "🏊": "water",
+  "🐠": "water", "🌊": "water", "🛶": "water", "🪁": "water", "🚤": "water",
+  "🦈": "water", "🐋": "water", "🐟": "water",
+  // fitness
+  "🏃": "run", "🏅": "run", "🏋️": "run", "🤸": "run", "💪": "run",
+  "🏁": "run", "🏞️": "run",
+  // music
+  "🎸": "music", "🎹": "music", "🎻": "music", "🪕": "music", "🥁": "music",
+  "🎷": "music", "🎺": "music", "🪈": "music", "🪗": "music", "🎧": "music",
+  // cooking
+  "👨‍🍳": "cook", "🍣": "cook", "🍜": "cook", "🍕": "cook", "🥟": "cook",
+  "🍖": "cook", "🍝": "cook", "🍫": "cook", "🥩": "cook", "🧆": "cook",
+  "🌮": "cook", "🥘": "cook", "🍲": "cook", "🫕": "cook", "🐙": "cook",
+  "🍛": "cook", "🧀": "cook", "🫙": "cook", "🔪": "cook",
+  // baking
+  "🍞": "bake", "🥖": "bake", "🧁": "bake", "🍰": "bake", "🥧": "bake", "🥐": "bake",
+  // drinks
+  "🍺": "drink", "🍷": "drink", "☕": "drink", "🥃": "drink", "🫖": "drink", "🍇": "drink",
+  // tech
+  "🤖": "tech", "📱": "tech", "🖥️": "tech", "🔐": "tech", "📊": "tech",
+  "🧬": "tech", "🖨️": "tech", "🎛️": "tech", "🎮": "tech", "🛸": "tech",
+  // garden & nature
+  "🥬": "garden", "🌻": "garden", "🦋": "garden", "🌳": "garden", "🌿": "garden",
+  "🪴": "garden", "🌶️": "garden", "🐝": "garden", "🌱": "garden", "🐛": "garden",
+  "🫚": "garden", "🍎": "garden", "🥕": "garden", "💐": "garden", "🍄": "garden",
+  // art & craft
+  "🎨": "art", "✒️": "art", "🏺": "art", "🖼️": "art", "📐": "art",
+  "🧶": "art", "🧵": "art", "🪢": "art", "🖋️": "art", "🖌️": "art",
+  "🗿": "art", "🪆": "art", "🪟": "art", "💎": "art", "🫧": "art",
+  "🧳": "art", "💍": "art", "🦷": "art", "✏️": "art",
+  // building
+  "🏠": "build", "🏡": "build", "⚒️": "build", "🪵": "build", "🔥": "build",
+  "⚙️": "build", "🧱": "build", "🪑": "build", "🔩": "build", "🏚️": "build",
+  "🛋️": "build", "🔦": "build", "⚡": "build", "🏰": "build", "🪨": "build",
+  "🧖": "build",
+  // writing & media
+  "📖": "write", "🎬": "write", "🎥": "write", "✍️": "write", "📚": "write",
+  "📝": "write", "🎞️": "write", "📺": "write", "🎙️": "write", "📕": "write",
+  "📻": "write",
+  // adventure & outdoors
+  "🧗": "advent", "🏔️": "advent", "🏜️": "advent", "🌋": "advent", "🛤️": "advent",
+  "🏕️": "advent", "🪂": "advent", "✈️": "advent", "📸": "advent", "🦇": "advent",
+  // business
+  "💼": "biz", "🚚": "biz", "❤️": "biz", "🛍️": "biz", "👕": "biz",
+  "🧼": "biz", "🕯️": "biz", "🧺": "biz", "📷": "biz",
+  // animals
+  "🐴": "animal", "🐕": "animal", "🐦": "animal", "🦜": "animal", "🐎": "animal",
+  // farming
+  "🐑": "farm", "🐐": "farm", "🧈": "farm", "🍯": "farm", "🌾": "farm",
+  // combat
+  "🥊": "combat", "🤺": "combat", "🏹": "combat", "🥋": "combat", "🤼": "combat",
+  // languages
+  "🌐": "lang", "🇯🇵": "lang", "🇫🇷": "lang", "🇰🇷": "lang", "🇧🇷": "lang",
+  "🇸🇦": "lang", "🇨🇳": "lang", "🤟": "lang",
+  // games & racket sports
+  "♟️": "game", "🎲": "game", "🧮": "game", "🎯": "game", "🎳": "game",
+  "⛳": "game", "🏓": "game", "🎾": "game", "🏌️": "game",
+  // vehicles
+  "🚗": "ride", "🏍️": "ride", "🛹": "ride", "🛼": "ride", "🚵": "ride", "🏎️": "ride",
+  // science
+  "🔭": "science", "🌌": "science", "🧪": "science", "🧲": "science", "🧠": "science", "📜": "science",
+  // performance
+  "🎤": "perform", "🤹": "perform", "💃": "perform", "🎭": "perform", "🎪": "perform", "🪄": "perform",
+  // wellness
+  "🧘": "zen", "📿": "zen",
+  // ice & winter
+  "⛸️": "ice", "🧊": "ice", "⛷️": "ice", "🏂": "ice",
+};
+
+function getThemedPool(pillEmoji: string): string[] {
+  const theme = PILL_THEME[pillEmoji];
+  return theme ? THEME_POOLS[theme] : EMOJIS;
+}
+
 const DEFAULT_EMOJIS = EMOJIS.slice(0, 3);
 
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
@@ -576,7 +680,13 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             key={text}
             onClick={() => {
               setGoal(text);
+              setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
+              setEmojiKey((k) => k + 1);
               window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            onMouseEnter={() => {
+              setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
+              setEmojiKey((k) => k + 1);
             }}
             className="group animate-pill-fade-in rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
