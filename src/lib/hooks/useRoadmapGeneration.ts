@@ -18,6 +18,7 @@ export function useRoadmapGeneration(
   goal: string,
   goalDescription?: string,
   context?: string,
+  location?: string,
 ) {
   const { apiKey } = useApiKey();
   const hasSubmitted = useRef(false);
@@ -35,9 +36,10 @@ export function useRoadmapGeneration(
         apiKey,
         goalDescription: goalDescription || undefined,
         context: context || undefined,
+        location: location || undefined,
       });
     }
-  }, [goal, apiKey, goalDescription, context, submit]);
+  }, [goal, apiKey, goalDescription, context, location, submit]);
 
   // Group nodes into spine entries with their branches
   const entries = useMemo((): SpineEntry[] => {

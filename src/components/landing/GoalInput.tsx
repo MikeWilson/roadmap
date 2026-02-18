@@ -300,10 +300,66 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [isRevealed, setIsRevealed] = useState(false);
   const [currentState, setCurrentState] = useState("");
   const [step, setStep] = useState<1 | 2>(1);
+  const [location, setLocation] = useState("");
+  const [locationMode, setLocationMode] = useState<
+    "idle" | "requesting" | "zip-input" | "resolved"
+  >("idle");
+  const [zipInput, setZipInput] = useState("");
   const expandedGoalRef = useRef<string | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const router = useRouter();
   const { apiKey } = useApiKey();
+
+  const requestLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setLocationMode("zip-input");
+      return;
+    }
+    setLocationMode("requesting");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&zoom=10`,
+          );
+          const data = await res.json();
+          const city =
+            data.address?.city ||
+            data.address?.town ||
+            data.address?.village ||
+            data.address?.county ||
+            "";
+          const state = data.address?.state || "";
+          const parts = [city, state].filter(Boolean);
+          if (parts.length > 0) {
+            setLocation(parts.join(", "));
+            setLocationMode("resolved");
+          } else {
+            setLocationMode("zip-input");
+          }
+        } catch {
+          setLocationMode("zip-input");
+        }
+      },
+      () => {
+        setLocationMode("zip-input");
+      },
+    );
+  }, []);
+
+  const handleZipSubmit = useCallback(() => {
+    const trimmed = zipInput.trim();
+    if (trimmed) {
+      setLocation(trimmed);
+      setLocationMode("resolved");
+    }
+  }, [zipInput]);
+
+  const clearLocation = useCallback(() => {
+    setLocation("");
+    setLocationMode("idle");
+    setZipInput("");
+  }, []);
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -381,6 +437,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     if (currentState.trim()) {
       params.set("context", currentState.trim());
     }
+    if (location.trim()) {
+      params.set("location", location.trim());
+    }
     router.push(`/roadmap?${params.toString()}`);
   };
 
@@ -447,7 +506,68 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               >
                 Today
               </label>
+
+              {locationMode === "resolved" ? (
+                <button
+                  onClick={clearLocation}
+                  className="ml-auto flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {location}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5 opacity-60">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              ) : locationMode === "requesting" ? (
+                <span className="ml-auto flex items-center gap-1 rounded-full bg-zinc-100 px-2.5 py-1 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Locating...
+                </span>
+              ) : locationMode === "idle" ? (
+                <button
+                  onClick={requestLocation}
+                  className="ml-auto flex items-center gap-1 rounded-full border border-zinc-300 px-2.5 py-1 text-xs text-zinc-400 transition-colors hover:border-blue-400 hover:text-blue-500 dark:border-zinc-600 dark:text-zinc-500 dark:hover:border-blue-500 dark:hover:text-blue-400"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Add location
+                </button>
+              ) : null}
             </div>
+            {locationMode === "zip-input" && !location && (
+              <div className="mt-1.5 flex items-center gap-2">
+                <input
+                  type="text"
+                  value={zipInput}
+                  onChange={(e) => setZipInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleZipSubmit()}
+                  placeholder="Enter zip code or city"
+                  autoFocus
+                  className="w-48 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-blue-900/40"
+                />
+                <button
+                  onClick={handleZipSubmit}
+                  disabled={!zipInput.trim()}
+                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-40 dark:bg-blue-500 dark:hover:bg-blue-600"
+                >
+                  Set
+                </button>
+                <button
+                  onClick={() => setLocationMode("idle")}
+                  className="text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
             <textarea
               id="current-state"
               value={currentState}
