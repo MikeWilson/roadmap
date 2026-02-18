@@ -18,12 +18,11 @@ Rules:
 9. The roadmap should be universally applicable, not just for developers
 10. Spine and milestone nodes should have side "center", branch nodes alternate "left" and "right"
 11. Milestone nodes should have parentId set to null and be ordered sequentially with spine nodes
-12. Every node MUST include a concrete "action" — a specific thing the learner can do right now to get started on that step. Actions must:
-    - Start with a verb: "Search", "Watch", "Read", "Complete", "Practice", "Google", "Try", "Build", "Follow", "Do"
-    - Reference freely available resources: YouTube searches, Google queries, Wikipedia articles, free online courses (Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers), subreddits, or specific beginner projects
-    - Include specific search queries in quotes when suggesting a search, so the learner can copy-paste them (e.g., Search YouTube for "how to solder for beginners")
-    - Be hyper-specific for branch nodes — don't just say "practice", say exactly what to practice and where
-    - For milestone nodes, the action should be a self-assessment or mini-project that proves competence`;
+12. Every node MUST include a concise "action" — a short, clickable label pointing the learner to a specific resource. Actions are displayed as links, so keep them short and name-oriented:
+    - Format as a resource name, not a command. Examples: "Soldering basics on YouTube", "Ohm's Law article on Khan Academy", "r/electronics beginner FAQ", "freeCodeCamp JavaScript course", "Build a LED blinker project"
+    - Keep under 40 characters when possible — these are link labels, not instructions
+    - Reference freely available resources: YouTube, Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers, Wikipedia, subreddits, or specific beginner projects
+    - For milestone nodes, use a short self-assessment or mini-project name (e.g., "Build a basic amplifier circuit")`;
 }
 
 export function buildUserPrompt(

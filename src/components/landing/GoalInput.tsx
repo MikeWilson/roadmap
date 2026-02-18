@@ -97,7 +97,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   if (step === 2) {
     return (
-      <div className="mt-10 w-full max-w-xl">
+      <div className="mt-4 w-full max-w-xl sm:mt-10">
         <button
           onClick={() => {
             setStep(1);
@@ -230,7 +230,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           </div>
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
           <button
             onClick={() => {
               setCurrentState("");
@@ -254,8 +254,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   }
 
   return (
-    <div className="mt-12 w-full max-w-xl">
-      <form onSubmit={handleGoalSubmit} className="flex gap-3">
+    <div className="mt-8 w-full max-w-xl sm:mt-12">
+      <form onSubmit={handleGoalSubmit} className="flex flex-col gap-3 sm:flex-row">
         <input
           type="text"
           value={goal}

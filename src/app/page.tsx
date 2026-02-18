@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <Header />
-      <main className="flex flex-col items-center justify-center px-4 pb-16 pt-32">
+      <main className="flex flex-col items-center px-4 pb-16 pt-20 sm:justify-center sm:pt-32">
         <div
           className={`transition-all duration-400 ease-out ${
             step === 2
@@ -18,10 +18,10 @@ export default function Home() {
               : "max-h-40 opacity-100"
           }`}
         >
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl text-center">
             Plan anything to death.
           </h1>
-          <p className="mt-4 max-w-xl text-center text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="mt-3 max-w-xl text-center text-base text-zinc-600 sm:mt-4 sm:text-lg dark:text-zinc-400">
             Enter a goal. Get a roadmap. Rest in peace knowing you have a plan.
           </p>
         </div>

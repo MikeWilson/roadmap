@@ -5,8 +5,13 @@ import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
 function searchUrl(action: string) {
   const lower = action.toLowerCase();
   if (lower.includes("youtube")) {
-    // Strip "search youtube for", "watch on youtube", etc. to get the raw query
-    const query = action.replace(/\b(search|watch|find|look up|browse)\b\s*(on\s+)?youtube\s*(for)?\s*/gi, "").replace(/^["'\s]+|["'\s]+$/g, "");
+    // Strip YouTube references and verb prefixes to get the raw search query
+    const query = action
+      .replace(/\bon\s+youtube\b/gi, "")
+      .replace(/\byoutube\b/gi, "")
+      .replace(/\b(search|watch|find|look up|browse)\b\s*(for)?\s*/gi, "")
+      .replace(/^["'\s\-–—]+|["'\s\-–—]+$/g, "")
+      .trim();
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
   }
   return `https://www.google.com/search?q=${encodeURIComponent(action)}`;
@@ -26,7 +31,7 @@ export function RoadmapTimeline({
   let stepNumber = 0;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 pb-32 pt-8">
+    <div className="mx-auto max-w-2xl px-4 pb-32 pt-8 sm:px-6">
       {/* Header */}
       <div className="mb-14">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
@@ -121,7 +126,7 @@ function StepRow({
                 href={searchUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/step:w-auto group-hover/step:opacity-100 hover:underline dark:text-indigo-400"
+                className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/step:w-auto group-hover/step:opacity-100 hover:underline sm:inline dark:text-indigo-400"
               >
                 → {action}
               </a>
@@ -130,12 +135,22 @@ function StepRow({
           <p className="mt-0.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             {description}
           </p>
+          {action && (
+            <a
+              href={searchUrl(action)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1.5 inline-block text-sm text-indigo-600 hover:underline sm:hidden dark:text-indigo-400"
+            >
+              → {action}
+            </a>
+          )}
         </div>
       </div>
 
       {/* Sub-steps (branches) */}
       {branches.length > 0 && (
-        <div className="ml-[19px] border-l border-zinc-200 pl-8 pt-3 pb-4 dark:border-zinc-700">
+        <div className="ml-[19px] border-l border-zinc-200 pl-4 pt-3 pb-4 sm:pl-8 dark:border-zinc-700">
           <div className="flex flex-col gap-2.5">
             {branches.map((branch, j) => (
               <div key={branch.id} className="group/branch flex items-start gap-3">
@@ -153,7 +168,7 @@ function StepRow({
                         href={searchUrl(branch.action)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/branch:w-auto group-hover/branch:opacity-100 hover:underline dark:text-indigo-400"
+                        className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/branch:w-auto group-hover/branch:opacity-100 hover:underline sm:inline dark:text-indigo-400"
                       >
                         → {branch.action}
                       </a>
@@ -162,6 +177,16 @@ function StepRow({
                   <span className="text-sm text-zinc-400 dark:text-zinc-500">
                     {branch.description}
                   </span>
+                  {branch.action && (
+                    <a
+                      href={searchUrl(branch.action)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-block text-sm text-indigo-600 hover:underline sm:hidden dark:text-indigo-400"
+                    >
+                      → {branch.action}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -184,32 +209,45 @@ function MilestoneRow({
   action?: string;
 }) {
   return (
-    <div className="group/milestone flex items-start gap-4 py-2">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400">
-        &#9733;
+    <div className="group/milestone flex flex-col sm:flex-row sm:items-start sm:gap-4 py-2">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400">
+          &#9733;
+        </div>
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:hidden dark:text-emerald-500">
+          Milestone
+        </span>
       </div>
-      <div className="min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/30">
-        <div className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 dark:text-emerald-500">
+      <div className="ml-14 mt-2 min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
+        <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
           Milestone
         </div>
-        <div className="flex items-baseline gap-2">
-          <div className="shrink truncate text-sm font-semibold text-emerald-900 dark:text-emerald-200">
-            {label}
-          </div>
-          {action && (
-            <a
-              href={searchUrl(action)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-xs text-emerald-600 opacity-0 transition-opacity duration-200 group-hover/milestone:w-auto group-hover/milestone:opacity-100 hover:underline dark:text-emerald-400"
-            >
-              → {action}
-            </a>
-          )}
+        <div className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+          {label}
         </div>
+        {action && (
+          <a
+            href={searchUrl(action)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 block text-sm text-emerald-600 hover:underline sm:hidden dark:text-emerald-400"
+          >
+            → {action}
+          </a>
+        )}
         <p className="mt-0.5 text-xs text-emerald-700/60 dark:text-emerald-400/60">
           {description}
         </p>
+        {action && (
+          <a
+            href={searchUrl(action)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-emerald-600 opacity-0 transition-opacity duration-200 group-hover/milestone:w-auto group-hover/milestone:opacity-100 hover:underline sm:inline dark:text-emerald-400"
+          >
+            → {action}
+          </a>
+        )}
       </div>
     </div>
   );
