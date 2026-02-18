@@ -48,7 +48,7 @@ function ExternalIcon() {
 function ActionBadge({ action }: { action: string }) {
   const isYouTube = action.toLowerCase().includes("youtube");
   return (
-    <span className="flex shrink-0 items-center gap-1 text-zinc-300 opacity-0 transition-opacity group-hover/card:opacity-100 dark:text-zinc-600">
+    <span className="flex shrink-0 items-center gap-1">
       {isYouTube ? <YouTubeIcon /> : <SearchIcon />}
       <ExternalIcon />
     </span>
@@ -159,33 +159,25 @@ function StepRow({
           {step}
         </div>
         <div className="min-w-0 pt-1.5">
-          {action ? (
-            <a
-              href={searchUrl(action)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group/card flex items-center gap-2 rounded-xl -mx-3 px-3 -my-1 py-1 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
-            >
-              <div className="min-w-0 flex-1">
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                  {label}
-                </h3>
-                <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
-                  {description}
-                </p>
-              </div>
-              <ActionBadge action={action} />
-            </a>
-          ) : (
-            <>
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                {label}
-              </h3>
-              <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
-                {description}
-              </p>
-            </>
-          )}
+          <>
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+              {label}
+            </h3>
+            <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
+              {description}
+            </p>
+            {action && (
+              <a
+                href={searchUrl(action)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group/card mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+              >
+                <ActionBadge action={action} />
+                {action}
+              </a>
+            )}
+          </>
         </div>
       </div>
 
@@ -204,32 +196,22 @@ function StepRow({
                   {SUBSTEP_LETTERS[j]}
                 </span>
                 <div className="min-w-0">
-                  {branch.action ? (
+                  <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
+                    {branch.label}
+                  </span>
+                  <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
+                    {branch.description}
+                  </span>
+                  {branch.action && (
                     <a
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card flex items-center gap-2 rounded-lg -mx-2 px-2 -my-0.5 py-0.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                      className="group/card mt-1 flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
                     >
-                      <span className="min-w-0 flex-1">
-                        <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
-                          {branch.label}
-                        </span>
-                        <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
-                          {branch.description}
-                        </span>
-                      </span>
                       <ActionBadge action={branch.action} />
+                      {branch.action}
                     </a>
-                  ) : (
-                    <>
-                      <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
-                        {branch.label}
-                      </span>
-                      <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
-                        {branch.description}
-                      </span>
-                    </>
                   )}
                 </div>
               </div>
@@ -262,41 +244,28 @@ function MilestoneRow({
           Milestone
         </span>
       </div>
-      {action ? (
-        <a
-          href={searchUrl(action)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group/card ml-14 mt-2 block min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 transition-colors hover:bg-emerald-100/80 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
-                Milestone
-              </div>
-              <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
-                {label}
-              </div>
-              <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
-                {description}
-              </p>
-            </div>
-            <ActionBadge action={action} />
-          </div>
-        </a>
-      ) : (
-        <div className="ml-14 mt-2 min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
-          <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
-            Milestone
-          </div>
-          <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
-            {label}
-          </div>
-          <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
-            {description}
-          </p>
+      <div className="ml-14 mt-2 min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
+        <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
+          Milestone
         </div>
-      )}
+        <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
+          {label}
+        </div>
+        <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
+          {description}
+        </p>
+        {action && (
+          <a
+            href={searchUrl(action)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/card mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
+          >
+            <ActionBadge action={action} />
+            {action}
+          </a>
+        )}
+      </div>
     </div>
   );
 }
