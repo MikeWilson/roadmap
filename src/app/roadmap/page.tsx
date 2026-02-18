@@ -12,8 +12,9 @@ function RoadmapContent() {
   const goal = searchParams.get("goal") || "";
   const goalDescription = searchParams.get("goalDescription") || undefined;
   const context = searchParams.get("context") || undefined;
+  const location = searchParams.get("location") || undefined;
   const { entries, isLoading, error, title, description } =
-    useRoadmapGeneration(goal, goalDescription, context);
+    useRoadmapGeneration(goal, goalDescription, context, location);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">

@@ -29,11 +29,16 @@ export function buildUserPrompt(
   goal: string,
   goalDescription?: string,
   context?: string,
+  location?: string,
 ): string {
   let prompt = `Create a complete learning roadmap for: "${goal}"`;
 
   if (goalDescription) {
     prompt += `\nWhat success looks like: ${goalDescription}`;
+  }
+
+  if (location) {
+    prompt += `\nThe user is located in: ${location}`;
   }
 
   prompt += `\n\nGenerate a structured roadmap with spine nodes (main path), branch nodes (sub-topics), and milestone nodes (checkpoints).`;
@@ -47,6 +52,14 @@ The user describes their current starting point as follows:
 Tailor the roadmap to their existing knowledge. You can move quickly through areas they already know (consolidating them into fewer early nodes) and spend more depth on what they still need to learn. Adjust the starting point and pacing accordingly — don't repeat what they've already mastered.`;
   } else {
     prompt += ` Start from absolute zero knowledge and progress to the target goal.`;
+  }
+
+  if (location) {
+    prompt += `\n\nSince the user is in ${location}:
+- ACTIONS MUST be localized — include "${location}" in action labels whenever a local resource, event, class, shop, or community exists. Examples: "${location} 5K events", "${location} pottery classes", "${location} running clubs on Meetup", "guitar lessons near ${location}". Make these feel like real search queries someone would type.
+- Reference local regulations, climate, terrain, or seasons where relevant (e.g., growing zones for gardening, local permits, weather considerations).
+- Prefer naming real local resources when obvious (e.g., community colleges, parks, known local shops) but generic localized searches are fine too.
+- Keep it natural — not every action needs the location, only the ones where locality genuinely matters (classes, events, meetups, shops, communities, regulations). Online resources like YouTube or Khan Academy don't need it.`;
   }
 
   return prompt;

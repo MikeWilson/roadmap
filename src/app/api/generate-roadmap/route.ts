@@ -6,7 +6,7 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompt";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const { goal, apiKey, goalDescription, context } = await req.json();
+  const { goal, apiKey, goalDescription, context, location } = await req.json();
 
   if (!goal || typeof goal !== "string") {
     return new Response("Goal is required", { status: 400 });
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     model: openai("gpt-4o"),
     schema: roadmapSchema,
     system: buildSystemPrompt(),
-    prompt: buildUserPrompt(goal, goalDescription, context),
+    prompt: buildUserPrompt(goal, goalDescription, context, location),
     temperature: 0.7,
   });
 
