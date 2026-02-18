@@ -21,7 +21,13 @@ function searchUrl(action: string) {
 
 function YouTubeIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 14 14" className="shrink-0 text-white" fill="none">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 14 14"
+      className="shrink-0 text-current"
+      fill="none"
+    >
       <rect x="1" y="3" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.2" />
       <path d="M5.5 5v4l3.5-2z" fill="currentColor" />
     </svg>
@@ -30,16 +36,35 @@ function YouTubeIcon() {
 
 function SearchIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0 text-white">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      className="shrink-0 text-current"
+    >
       <circle cx="5.5" cy="5.5" r="3.5" />
       <path d="M8.5 8.5l3 3" />
     </svg>
   );
 }
 
-function ExternalIcon() {
+function ExternalIcon({ className }: { className?: string }) {
   return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`shrink-0 ${className ?? ""}`}
+    >
       <path d="M3.5 1h5.5v5.5M8.5 1.5 3 7" />
     </svg>
   );
@@ -50,7 +75,7 @@ function ActionBadge({ action }: { action: string }) {
   return (
     <span className="flex shrink-0 items-center gap-1">
       {isYouTube ? <YouTubeIcon /> : <SearchIcon />}
-      <ExternalIcon />
+      <ExternalIcon className="hidden sm:inline-flex" />
     </span>
   );
 }
@@ -171,10 +196,11 @@ function StepRow({
                 href={searchUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/card mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 sm:w-auto dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
               >
                 <ActionBadge action={action} />
-                {action}
+                <span className="min-w-0 truncate">{action}</span>
+                <ExternalIcon className="sm:hidden" />
               </a>
             )}
           </>
@@ -207,10 +233,13 @@ function StepRow({
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card mt-1 flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                      className="group/card mt-1 flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 sm:w-auto dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
                     >
                       <ActionBadge action={branch.action} />
-                      {branch.action}
+                      <span className="min-w-0 truncate">
+                        {branch.action}
+                      </span>
+                      <ExternalIcon className="sm:hidden" />
                     </a>
                   )}
                 </div>
@@ -259,10 +288,11 @@ function MilestoneRow({
             href={searchUrl(action)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/card mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
+            className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 sm:w-auto dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
           >
             <ActionBadge action={action} />
-            {action}
+            <span className="min-w-0 truncate">{action}</span>
+            <ExternalIcon className="sm:hidden" />
           </a>
         )}
       </div>
