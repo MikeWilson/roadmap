@@ -8,9 +8,9 @@ export default function Home() {
   const [step, setStep] = useState<1 | 2>(1);
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
       <Header />
-      <main className="flex min-h-screen flex-col items-center px-4 pb-16 sm:justify-center">
+      <main className="flex flex-1 flex-col items-center px-4 pb-16 pt-8 sm:pt-[18vh]">
         <GoalInput onStepChange={setStep} />
       </main>
     </div>

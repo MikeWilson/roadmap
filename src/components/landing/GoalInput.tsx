@@ -5,14 +5,245 @@ import { useRouter } from "next/navigation";
 import { useApiKey } from "@/lib/hooks/useApiKey";
 
 const SUGGESTIONS = [
-  "Hobbyist electrical engineer",
-  "Run a marathon",
-  "Learn to play guitar",
-  "Start a small business",
-  "Triathlon athlete",
-  "Learn machine learning",
-  "Become a home chef",
-  "Learn woodworking",
+  // --- initial 8 ---
+  ["🔌", "Hobbyist electrical engineer"],
+  ["🏃", "Run a marathon"],
+  ["🎸", "Learn to play guitar"],
+  ["💼", "Start a small business"],
+  ["🏊", "Triathlon athlete"],
+  ["🤖", "Learn machine learning"],
+  ["👨‍🍳", "Become a home chef"],
+  ["🎣", "Learn to fly fish"],
+  // --- batch 2 (8 more → 16) ---
+  ["📖", "Write a novel"],
+  ["🤿", "Get scuba certified"],
+  ["🍺", "Brew my own beer"],
+  ["🏄", "Learn to surf"],
+  ["📱", "Build a mobile app"],
+  ["🥬", "Grow a vegetable garden"],
+  ["🧘", "Become a yoga instructor"],
+  ["✒️", "Learn calligraphy"],
+  // --- batch 3 (16 more → 32) ---
+  ["🚗", "Restore a vintage car"],
+  ["⛵", "Learn to sail"],
+  ["🎙️", "Start a podcast"],
+  ["🐝", "Become a beekeeper"],
+  ["♟️", "Master chess"],
+  ["🏺", "Learn pottery"],
+  ["🏅", "Train for an Ironman"],
+  ["🏠", "Build a cabin"],
+  ["🤟", "Learn sign language"],
+  ["🍷", "Become a sommelier"],
+  ["🎥", "Start a YouTube channel"],
+  ["⚒️", "Learn blacksmithing"],
+  ["✈️", "Get a pilot's license"],
+  ["🎨", "Master watercolor painting"],
+  ["🛸", "Build a drone"],
+  ["🧗", "Learn to rock climb"],
+  // --- the full glorious list ---
+  ["📸", "Become a wildlife photographer"],
+  ["🔥", "Learn to weld"],
+  ["🚚", "Start a food truck"],
+  ["🎬", "Write a screenplay"],
+  ["🥊", "Learn kickboxing"],
+  ["🌳", "Build a treehouse"],
+  ["🍞", "Master sourdough baking"],
+  ["🎧", "Learn to DJ"],
+  ["❤️", "Start a nonprofit"],
+  ["🤺", "Learn fencing"],
+  ["🔭", "Build a telescope"],
+  ["🛹", "Learn to skateboard"],
+  ["🦋", "Start a butterfly garden"],
+  ["📐", "Master origami"],
+  ["🌌", "Learn astrophotography"],
+  ["🤖", "Build an Arduino robot"],
+  ["⛷️", "Learn to ski"],
+  ["📚", "Start a book club"],
+  ["☕", "Master espresso making"],
+  ["🏹", "Learn archery"],
+  ["🏎️", "Build a go-kart"],
+  ["🥃", "Become a whiskey connoisseur"],
+  ["🪵", "Learn woodworking"],
+  ["✍️", "Start a blog"],
+  ["🫧", "Learn glassblowing"],
+  ["🖨️", "Build a 3D printer"],
+  ["🥖", "Master bread baking"],
+  ["🤸", "Learn parkour"],
+  ["🌻", "Start a community garden"],
+  ["🐠", "Become a certified diver"],
+  ["💎", "Learn lapidary"],
+  ["⚙️", "Build a CNC machine"],
+  ["🍄", "Learn to forage"],
+  ["🧺", "Start a farmers market stand"],
+  ["🪢", "Master macramé"],
+  ["🏍️", "Learn to ride a motorcycle"],
+  ["🎹", "Build a synthesizer"],
+  ["🏔️", "Become a mountain guide"],
+  ["🧳", "Learn leatherworking"],
+  ["👕", "Start a clothing brand"],
+  ["🍣", "Master sushi making"],
+  ["🪂", "Learn to paraglide"],
+  ["🏡", "Build a tiny house"],
+  ["🍄", "Become a mushroom forager"],
+  ["🖼️", "Learn screen printing"],
+  ["🕯️", "Start a candle business"],
+  ["🍜", "Master Thai cooking"],
+  ["🏂", "Learn to snowboard"],
+  ["🛶", "Build a kayak"],
+  ["🏞️", "Become a trail runner"],
+  ["📕", "Learn bookbinding"],
+  ["🧀", "Start a cheese-making hobby"],
+  ["☕", "Master latte art"],
+  ["🛼", "Learn to inline skate"],
+  ["📻", "Become a ham radio operator"],
+  ["💃", "Learn to tap dance"],
+  ["🪴", "Start a terrarium business"],
+  ["🍛", "Master Indian cooking"],
+  ["🌊", "Learn to windsurf"],
+  ["🍕", "Build a pizza oven"],
+  ["🏋️", "Become a CrossFit athlete"],
+  ["🧺", "Learn basket weaving"],
+  ["🫖", "Start a kombucha brewery"],
+  ["🥐", "Master French pastry"],
+  ["🐴", "Learn horseback riding"],
+  ["🔥", "Build a fire pit"],
+  ["🐦", "Become a bird watcher"],
+  ["🤹", "Learn to juggle"],
+  ["🌶️", "Start a hot sauce brand"],
+  ["🥟", "Master dumpling making"],
+  ["⛸️", "Learn ice skating"],
+  ["🥩", "Build a smokehouse"],
+  ["🎤", "Become a standup comedian"],
+  ["🧶", "Learn to knit"],
+  ["🧼", "Start a soap business"],
+  ["🍜", "Master ramen from scratch"],
+  ["🛶", "Learn to paddleboard"],
+  ["🚤", "Build a boat"],
+  ["🏊", "Become a marathon swimmer"],
+  ["🧵", "Learn embroidery"],
+  ["💍", "Start a jewelry line"],
+  ["🍖", "Master BBQ smoking"],
+  ["🏄", "Learn to wakeboard"],
+  ["🌿", "Build a greenhouse"],
+  ["🎙️", "Become a voice actor"],
+  ["🧶", "Learn to crochet"],
+  ["🪴", "Start a plant nursery"],
+  ["🫙", "Master fermentation"],
+  ["🪁", "Learn to kitesurf"],
+  ["🧖", "Build a sauna"],
+  ["🧠", "Become a trivia host"],
+  ["🔪", "Learn whittling"],
+  ["🛍️", "Start a vintage shop"],
+  ["🍫", "Master chocolate making"],
+  ["🦇", "Learn to spelunk"],
+  ["🧗", "Build a climbing wall"],
+  ["🐕", "Become a dog trainer"],
+  ["🏺", "Learn to throw pottery on a wheel"],
+  ["💐", "Start a flower farm"],
+  ["🍝", "Master pasta from scratch"],
+  ["🚵", "Learn to mountain bike"],
+  ["🎛️", "Build a recording studio"],
+  ["📜", "Become a local historian"],
+  ["🧵", "Learn to spin yarn"],
+  ["📷", "Start a photography business"],
+  ["🥟", "Master dim sum"],
+  ["⛸️", "Learn figure skating"],
+  ["🛹", "Build a skatepark"],
+  ["🏕️", "Become a scoutmaster"],
+  ["🪟", "Learn to make stained glass"],
+  ["🧁", "Start a bakery"],
+  ["🎭", "Learn improv comedy"],
+  ["🦜", "Raise backyard chickens"],
+  ["🧊", "Learn ice sculpting"],
+  ["🎪", "Learn aerial silks"],
+  ["🌾", "Start a homestead"],
+  ["🧬", "Learn bioinformatics"],
+  ["🏰", "Build a medieval forge"],
+  ["🎯", "Master darts"],
+  ["🧲", "Build an electromagnet"],
+  ["🦷", "Learn dental carving"],
+  ["🪨", "Build a rock garden"],
+  ["🌶️", "Grow the hottest pepper"],
+  ["🎲", "Design a board game"],
+  ["🧪", "Learn home chemistry"],
+  ["🏺", "Make my own ceramics"],
+  ["🧊", "Learn to make cocktails"],
+  ["🎻", "Learn the violin"],
+  ["🪕", "Learn the banjo"],
+  ["🥁", "Learn the drums"],
+  ["🎷", "Learn the saxophone"],
+  ["🎺", "Learn the trumpet"],
+  ["🪈", "Learn the flute"],
+  ["🪗", "Learn the accordion"],
+  ["📝", "Write poetry"],
+  ["🎮", "Make an indie video game"],
+  ["🖥️", "Build a PC from scratch"],
+  ["🔐", "Learn cybersecurity"],
+  ["📊", "Master data visualization"],
+  ["🌐", "Learn a new language"],
+  ["🇯🇵", "Learn Japanese"],
+  ["🇫🇷", "Learn French"],
+  ["🇰🇷", "Learn Korean"],
+  ["🇧🇷", "Learn Portuguese"],
+  ["🇸🇦", "Learn Arabic"],
+  ["🇨🇳", "Learn Mandarin"],
+  ["🧮", "Learn to speed-solve Rubik's cubes"],
+  ["🪄", "Learn magic tricks"],
+  ["🎭", "Join a theater troupe"],
+  ["💪", "Get a pull-up to handstand"],
+  ["🧗", "Climb a 14er"],
+  ["🏜️", "Hike the Appalachian Trail"],
+  ["🏔️", "Summit Mount Rainier"],
+  ["🌋", "Visit every national park"],
+  ["🛤️", "Bike across the country"],
+  ["🏁", "Race in a triathlon"],
+  ["🦈", "Swim with sharks"],
+  ["🐋", "Go whale watching"],
+  ["🐎", "Learn polo"],
+  ["🎳", "Join a bowling league"],
+  ["⛳", "Break 80 in golf"],
+  ["🏓", "Get competitive at ping pong"],
+  ["🥋", "Earn a black belt"],
+  ["🤼", "Learn wrestling"],
+  ["🏌️", "Master disc golf"],
+  ["🎾", "Win a tennis tournament"],
+  ["🧘", "Complete a silent retreat"],
+  ["📿", "Start a meditation practice"],
+  ["🖋️", "Learn hand lettering"],
+  ["🎞️", "Make a short film"],
+  ["🎙️", "Produce a documentary"],
+  ["📺", "Start a Twitch stream"],
+  ["🖌️", "Learn oil painting"],
+  ["✏️", "Learn to draw portraits"],
+  ["🗿", "Learn stone carving"],
+  ["🪆", "Learn wood turning"],
+  ["🧱", "Build a brick oven"],
+  ["🔩", "Restore vintage tools"],
+  ["🏚️", "Flip a house"],
+  ["🪑", "Build custom furniture"],
+  ["🛋️", "Learn upholstery"],
+  ["🔦", "Build a van conversion"],
+  ["⚡", "Install solar panels at home"],
+  ["🌱", "Start composting"],
+  ["🐛", "Start a worm farm"],
+  ["🐟", "Build an aquaponics system"],
+  ["🫚", "Grow medicinal herbs"],
+  ["🍇", "Make my own wine"],
+  ["🍎", "Start an orchard"],
+  ["🥕", "Run a CSA farm share"],
+  ["🐑", "Raise sheep"],
+  ["🐐", "Start a goat dairy"],
+  ["🧈", "Learn to make butter"],
+  ["🍯", "Harvest my own honey"],
+  ["🥧", "Win a pie baking contest"],
+  ["🍰", "Master cake decorating"],
+  ["🧆", "Master Middle Eastern cooking"],
+  ["🌮", "Master Mexican cooking"],
+  ["🥘", "Master Ethiopian cooking"],
+  ["🍲", "Master Korean cooking"],
+  ["🫕", "Master fondue"],
+  ["🥩", "Dry-age my own steaks"],
+  ["🐙", "Cook every Julia Child recipe"],
 ] as const;
 
 const EMOJIS = [
@@ -61,6 +292,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     () => Math.floor(Math.random() * SUGGESTIONS.length),
   );
   const [goal, setGoal] = useState("");
+  const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
     "e.g., I took a physics class in college and can solder basic circuits, but I've never designed my own PCB...",
@@ -340,16 +572,51 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         </button>
       </form>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
-        {SUGGESTIONS.map((s) => (
+        {SUGGESTIONS.slice(0, visibleCount).map(([emoji, text]) => (
           <button
-            key={s}
-            onClick={() => setGoal(s)}
-            className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+            key={text}
+            onClick={() => {
+              setGoal(text);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="group animate-pill-fade-in rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           >
-            {s}
+            <span className="mr-1.5 grayscale transition-[filter] duration-200 group-hover:grayscale-0">{emoji}</span>
+            {text}
           </button>
         ))}
       </div>
+      {visibleCount < SUGGESTIONS.length && (
+        <button
+          onClick={() => {
+            setVisibleCount((prev) =>
+              prev >= 32 ? SUGGESTIONS.length : prev * 2,
+            );
+          }}
+          className="mx-auto mt-3 flex items-center gap-1 text-sm text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+        >
+          <span>
+            {visibleCount >= 32
+              ? "I'm picky, give me all the ideas"
+              : visibleCount >= 16
+                ? "Even more ideas"
+                : "More ideas"}
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
