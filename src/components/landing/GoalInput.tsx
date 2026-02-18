@@ -6,14 +6,13 @@ import { useApiKey } from "@/lib/hooks/useApiKey";
 
 const SUGGESTIONS = [
   // --- initial 8 ---
-  ["🔌", "Hobbyist electrical engineer"],
+  ["🎣", "Learn to fly fish"],
   ["🏃", "Run a marathon"],
   ["🎸", "Learn to play guitar"],
   ["💼", "Start a small business"],
   ["🏊", "Triathlon athlete"],
   ["🤖", "Learn machine learning"],
   ["👨‍🍳", "Become a home chef"],
-  ["🎣", "Learn to fly fish"],
   // --- batch 2 (8 more → 16) ---
   ["📖", "Write a novel"],
   ["🤿", "Get scuba certified"],
@@ -560,7 +559,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           type="text"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
-          placeholder={SUGGESTIONS[suggestionIndex]}
+          placeholder={SUGGESTIONS[suggestionIndex][1]}
           className="flex-1 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
         />
         <button

@@ -37,6 +37,7 @@ function RoadmapContent() {
             entries={entries}
             title={title}
             description={description}
+            isLoading={isLoading}
           />
         )}
       </div>
