@@ -6,14 +6,13 @@ import { useApiKey } from "@/lib/hooks/useApiKey";
 
 const SUGGESTIONS = [
   // --- initial 8 ---
-  ["🔌", "Hobbyist electrical engineer"],
+  ["🎣", "Learn to fly fish"],
   ["🏃", "Run a marathon"],
   ["🎸", "Learn to play guitar"],
   ["💼", "Start a small business"],
   ["🏊", "Triathlon athlete"],
   ["🤖", "Learn machine learning"],
   ["👨‍🍳", "Become a home chef"],
-  ["🎣", "Learn to fly fish"],
   // --- batch 2 (8 more → 16) ---
   ["📖", "Write a novel"],
   ["🤿", "Get scuba certified"],
