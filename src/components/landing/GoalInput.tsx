@@ -15,7 +15,45 @@ const SUGGESTIONS = [
   "Learn woodworking",
 ] as const;
 
+const EMOJIS = [
+  // death & rip
+  "🪦", "💀", "☠️", "⚰️", "👻", "🦴", "🕯️", "⚱️", "🥀",
+  // flowers & nature
+  "🌸", "🌺", "🌻", "🌹", "🌷", "💐", "🌼", "🪻", "🌵",
+  // animals
+  "🐶", "🐱", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁",
+  "🐧", "🦉", "🦋", "🐌", "🐞", "🐙", "🐬", "🐳", "🦈",
+  "🐘", "🦒", "🦦", "🦥", "🦔", "🦩", "🦚", "🕊️", "🐢",
+  // sports & hobbies
+  "⚽", "🏀", "🎾", "🏈", "⚾", "🎳", "🏓", "🛹", "🎿",
+  "🏄", "🚴", "🏋️", "🧗", "🎣", "🏕️",
+  // music & arts
+  "🎸", "🎹", "🥁", "🎺", "🎻", "🎨", "🖌️", "📷", "🎬",
+  // food & cooking
+  "🍕", "🍣", "🌮", "🍰", "🧁", "🍩", "🥐", "🍜", "🥑",
+  // travel & adventure
+  "🏔️", "🌋", "🏝️", "🗺️", "🧭", "⛵", "🚀", "✈️", "🎪",
+  // tools & making
+  "🔧", "🔨", "🪚", "🧲", "💡", "🔬", "🔭", "🧪", "🪴",
+  // books & learning
+  "📚", "🎓", "✏️", "🧩", "♟️", "🎲",
+  // misc fun
+  "🎯", "🪁", "🛶", "⛺", "🎠", "🎡", "🌈", "⭐", "🔥",
+];
+
+function pickRandom(pool: string[], count: number, exclude: string[]): string[] {
+  const available = pool.filter((e) => !exclude.includes(e));
+  const result: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const idx = Math.floor(Math.random() * available.length);
+    result.push(available.splice(idx, 1)[0]);
+  }
+  return result;
+}
+
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
+  const [emojis, setEmojis] = useState(() => pickRandom(EMOJIS, 3, []));
+  const [emojiKey, setEmojiKey] = useState(0);
   const [goal, setGoal] = useState("");
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
@@ -83,6 +121,11 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         });
       });
   }, [step, goal, apiKey]);
+
+  const shuffleEmojis = () => {
+    setEmojis(pickRandom(EMOJIS, 3, emojis));
+    setEmojiKey((k) => k + 1);
+  };
 
   const handleGenerate = () => {
     const params = new URLSearchParams({ goal: goal.trim() });
@@ -232,16 +275,6 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
         <div className="mt-6 flex gap-3">
           <button
-            onClick={() => {
-              setCurrentState("");
-              handleGenerate();
-            }}
-            disabled={isExpanding}
-            className="rounded-xl border border-zinc-300 px-6 py-3 font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-          >
-            Skip
-          </button>
-          <button
             onClick={handleGenerate}
             disabled={!goal.trim() || isExpanding}
             className="flex-1 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
@@ -254,7 +287,27 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   }
 
   return (
-    <div className="mt-12 w-full max-w-xl">
+    <div className="w-full max-w-xl">
+      <button
+        onClick={shuffleEmojis}
+        className="mb-10 flex w-full cursor-pointer items-center justify-center gap-3"
+        aria-label="Shuffle emojis"
+        type="button"
+      >
+        <span className="select-none text-4xl opacity-60">🌱</span>
+        <span className="mx-1 text-zinc-300 dark:text-zinc-600">···</span>
+        {emojis.map((emoji, i) => (
+          <span
+            key={`${emojiKey}-${i}`}
+            className="animate-emoji-bounce select-none text-6xl"
+            style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
+          >
+            {emoji}
+          </span>
+        ))}
+        <span className="mx-1 text-zinc-300 dark:text-zinc-600">···</span>
+        <span className="select-none text-4xl opacity-60">🪦</span>
+      </button>
       <form onSubmit={handleGoalSubmit} className="flex gap-3">
         <input
           type="text"
@@ -271,7 +324,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           Next
         </button>
       </form>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
         {SUGGESTIONS.map((s) => (
           <button
             key={s}

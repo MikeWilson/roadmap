@@ -65,7 +65,7 @@ export function Header() {
             href="/"
             className="text-lg font-bold text-zinc-900 dark:text-zinc-100"
           >
-            roadmap.🪦
+            roadmap.rip
           </Link>
           <div className="relative" ref={menuRef}>
             <button
