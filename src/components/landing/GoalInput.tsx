@@ -57,6 +57,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
   const [emojiKey, setEmojiKey] = useState(0);
   const hasMounted = useRef(false);
+  const [suggestionIndex, setSuggestionIndex] = useState(
+    () => Math.floor(Math.random() * SUGGESTIONS.length),
+  );
   const [goal, setGoal] = useState("");
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
@@ -136,6 +139,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const shuffleEmojis = () => {
     setEmojis(pickRandom(EMOJIS, 3, emojis));
     setEmojiKey((k) => k + 1);
+    setSuggestionIndex((i) => (i + 1) % SUGGESTIONS.length);
   };
 
   const handleGenerate = () => {
@@ -324,7 +328,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           type="text"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
-          placeholder="e.g., Become a hobbyist electrical engineer"
+          placeholder={SUGGESTIONS[suggestionIndex]}
           className="flex-1 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
         />
         <button
