@@ -20,8 +20,29 @@ Rules:
 11. Milestone nodes should have parentId set to null and be ordered sequentially with spine nodes`;
 }
 
-export function buildUserPrompt(goal: string): string {
-  return `Create a complete learning roadmap for: "${goal}"
+export function buildUserPrompt(
+  goal: string,
+  goalDescription?: string,
+  context?: string,
+): string {
+  let prompt = `Create a complete learning roadmap for: "${goal}"`;
 
-Generate a structured roadmap with spine nodes (main path), branch nodes (sub-topics), and milestone nodes (checkpoints). Start from absolute zero knowledge and progress to the target goal.`;
+  if (goalDescription) {
+    prompt += `\nWhat success looks like: ${goalDescription}`;
+  }
+
+  prompt += `\n\nGenerate a structured roadmap with spine nodes (main path), branch nodes (sub-topics), and milestone nodes (checkpoints).`;
+
+  if (context) {
+    prompt += `
+
+The user describes their current starting point as follows:
+"${context}"
+
+Tailor the roadmap to their existing knowledge. You can move quickly through areas they already know (consolidating them into fewer early nodes) and spend more depth on what they still need to learn. Adjust the starting point and pacing accordingly — don't repeat what they've already mastered.`;
+  } else {
+    prompt += ` Start from absolute zero knowledge and progress to the target goal.`;
+  }
+
+  return prompt;
 }

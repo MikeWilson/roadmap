@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useApiKey } from "@/lib/hooks/useApiKey";
 
 const SUGGESTIONS = [
   "Hobbyist electrical engineer",
@@ -12,21 +13,234 @@ const SUGGESTIONS = [
   "Learn machine learning",
   "Become a home chef",
   "Learn woodworking",
-];
+] as const;
 
-export function GoalInput() {
+export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
   const [goal, setGoal] = useState("");
+  const [goalDescription, setGoalDescription] = useState("");
+  const [contextPlaceholder, setContextPlaceholder] = useState(
+    "e.g., I took a physics class in college and can solder basic circuits, but I've never designed my own PCB...",
+  );
+  const [isExpanding, setIsExpanding] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [currentState, setCurrentState] = useState("");
+  const [step, setStep] = useState<1 | 2>(1);
+  const expandedGoalRef = useRef<string | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const router = useRouter();
+  const { apiKey } = useApiKey();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }, []);
+
+  const descriptionCallbackRef = useCallback(
+    (el: HTMLTextAreaElement | null) => {
+      descriptionRef.current = el;
+      autoResize(el);
+    },
+    [autoResize],
+  );
+
+  // Auto-resize when goalDescription changes
+  useEffect(() => {
+    autoResize(descriptionRef.current);
+  }, [goalDescription, autoResize]);
+
+  const handleGoalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goal.trim()) return;
-    router.push(`/roadmap?goal=${encodeURIComponent(goal.trim())}`);
+    setStep(2);
+    onStepChange?.(2);
   };
+
+  // Expand the goal into a richer description when entering step 2
+  useEffect(() => {
+    if (step !== 2 || expandedGoalRef.current === goal) return;
+    expandedGoalRef.current = goal;
+    setIsExpanding(true);
+    setIsRevealed(false);
+    setGoalDescription("");
+
+    fetch("/api/expand-goal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ goal, apiKey }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.description) setGoalDescription(data.description);
+        if (data?.currentStatePlaceholder)
+          setContextPlaceholder(data.currentStatePlaceholder);
+      })
+      .finally(() => {
+        setIsExpanding(false);
+        // Small delay so the DOM renders before triggering the transition
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setIsRevealed(true));
+        });
+      });
+  }, [step, goal, apiKey]);
+
+  const handleGenerate = () => {
+    const params = new URLSearchParams({ goal: goal.trim() });
+    if (goalDescription.trim()) {
+      params.set("goalDescription", goalDescription.trim());
+    }
+    if (currentState.trim()) {
+      params.set("context", currentState.trim());
+    }
+    router.push(`/roadmap?${params.toString()}`);
+  };
+
+  if (step === 2) {
+    return (
+      <div className="mt-10 w-full max-w-xl">
+        <button
+          onClick={() => {
+            setStep(1);
+            onStepChange?.(1);
+            expandedGoalRef.current = null;
+          }}
+          className="mb-8 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+
+        <div className="relative pl-10">
+          {/* Vertical dashed line connecting the two points, fading out at bottom */}
+          <div
+            className="absolute left-[15px] top-8 bottom-0 w-px border-l-2 border-dashed border-zinc-300 dark:border-zinc-600"
+            style={{
+              maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+            }}
+          />
+
+          {/* Starting point — where you are now */}
+          <div className="relative pb-8">
+            <div className="absolute -left-10 top-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-blue-600 dark:text-blue-400"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="12" r="8" />
+              </svg>
+            </div>
+            <label
+              htmlFor="current-state"
+              className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400"
+            >
+              Where you are now
+            </label>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              Describe your current experience so we can tailor the roadmap.
+            </p>
+            <textarea
+              id="current-state"
+              value={currentState}
+              onChange={(e) => setCurrentState(e.target.value)}
+              placeholder={contextPlaceholder}
+              rows={4}
+              className="mt-3 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+            />
+          </div>
+
+          {/* Destination — where you want to be */}
+          <div className="relative">
+            <div className="absolute -left-10 top-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-emerald-600 dark:text-emerald-400"
+              >
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                <line x1="4" x2="4" y1="22" y2="15" />
+              </svg>
+            </div>
+            <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              Where you&apos;ll be
+            </p>
+            <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+              {goal}
+            </p>
+            <div
+              className={`mt-2 transition-all duration-500 ease-out ${
+                isExpanding
+                  ? "opacity-0 blur-sm"
+                  : isRevealed
+                    ? "opacity-100 blur-0"
+                    : "opacity-0 blur-sm"
+              }`}
+            >
+              <textarea
+                ref={descriptionCallbackRef}
+                value={goalDescription}
+                onChange={(e) => setGoalDescription(e.target.value)}
+                rows={1}
+                className="w-full resize-none overflow-hidden rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={handleGenerate}
+            disabled={!goal.trim() || isExpanding}
+            className="flex-1 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            Generate Roadmap
+          </button>
+          <button
+            onClick={() => {
+              setCurrentState("");
+              handleGenerate();
+            }}
+            disabled={isExpanding}
+            className="rounded-xl border border-zinc-300 px-6 py-3 font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+          >
+            Skip
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-12 w-full max-w-xl">
-      <form onSubmit={handleSubmit} className="flex gap-3">
+      <form onSubmit={handleGoalSubmit} className="flex gap-3">
         <input
           type="text"
           value={goal}
@@ -39,7 +253,7 @@ export function GoalInput() {
           disabled={!goal.trim()}
           className="rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
         >
-          Generate
+          Next
         </button>
       </form>
       <div className="mt-6 flex flex-wrap gap-2">

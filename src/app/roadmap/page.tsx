@@ -10,8 +10,10 @@ import { useRoadmapGeneration } from "@/lib/hooks/useRoadmapGeneration";
 function RoadmapContent() {
   const searchParams = useSearchParams();
   const goal = searchParams.get("goal") || "";
+  const goalDescription = searchParams.get("goalDescription") || undefined;
+  const context = searchParams.get("context") || undefined;
   const { entries, isLoading, error, title, description } =
-    useRoadmapGeneration(goal);
+    useRoadmapGeneration(goal, goalDescription, context);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
