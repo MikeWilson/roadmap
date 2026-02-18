@@ -6,6 +6,11 @@ export const roadmapNodeSchema = z.object({
   description: z
     .string()
     .describe("One-sentence explanation of this topic/skill"),
+  action: z
+    .string()
+    .describe(
+      'A specific, concrete next action the learner should take right now. Must start with a verb and reference a real, freely available resource or searchable query. Examples: \'Search YouTube for "beginner soldering tutorial"\', \'Read the MDN guide on HTML basics\', \'Google "how to tune a guitar by ear"\', \'Complete the free Codecademy intro to Python course\''
+    ),
   type: z.enum(["spine", "branch", "milestone"]).describe(
     "spine = main vertical path item, branch = sub-topic off the spine, milestone = checkpoint/goal"
   ),

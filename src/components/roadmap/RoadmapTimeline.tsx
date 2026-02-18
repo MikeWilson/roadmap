@@ -2,6 +2,16 @@
 
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
 
+function searchUrl(action: string) {
+  const lower = action.toLowerCase();
+  if (lower.includes("youtube")) {
+    // Strip "search youtube for", "watch on youtube", etc. to get the raw query
+    const query = action.replace(/\b(search|watch|find|look up|browse)\b\s*(on\s+)?youtube\s*(for)?\s*/gi, "").replace(/^["'\s]+|["'\s]+$/g, "");
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  }
+  return `https://www.google.com/search?q=${encodeURIComponent(action)}`;
+}
+
 interface RoadmapTimelineProps {
   entries: SpineEntry[];
   title: string;
@@ -48,11 +58,13 @@ export function RoadmapTimeline({
                 <MilestoneRow
                   label={entry.node.label}
                   description={entry.node.description}
+                  action={entry.node.action}
                 />
               ) : (
                 <StepRow
                   label={entry.node.label}
                   description={entry.node.description}
+                  action={entry.node.action}
                   step={currentStep}
                   branches={entry.branches}
                 />
@@ -94,25 +106,39 @@ const SUBSTEP_LETTERS = "abcdefghijklmnopqrstuvwxyz";
 function StepRow({
   label,
   description,
+  action,
   step,
   branches,
 }: {
   label: string;
   description: string;
+  action?: string;
   step: number;
-  branches: { id: string; label: string; description: string }[];
+  branches: { id: string; label: string; description: string; action?: string }[];
 }) {
   return (
     <div>
       {/* Step header */}
-      <div className="flex items-start gap-4">
+      <div className="group/step flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-100 dark:text-zinc-900">
           {step}
         </div>
-        <div className="pt-1.5">
-          <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-            {label}
-          </h3>
+        <div className="min-w-0 pt-1.5">
+          <div className="flex items-baseline gap-2">
+            <h3 className="shrink truncate text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              {label}
+            </h3>
+            {action && (
+              <a
+                href={searchUrl(action)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/step:w-auto group-hover/step:opacity-100 hover:underline dark:text-indigo-400"
+              >
+                → {action}
+              </a>
+            )}
+          </div>
           <p className="mt-0.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             {description}
           </p>
@@ -124,17 +150,29 @@ function StepRow({
         <div className="ml-[19px] border-l border-zinc-200 pl-8 pt-3 pb-4 dark:border-zinc-700">
           <div className="flex flex-col gap-2.5">
             {branches.map((branch, j) => (
-              <div key={branch.id} className="flex items-start gap-3">
+              <div key={branch.id} className="group/branch flex items-start gap-3">
                 <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500">
                   {step}
                   {SUBSTEP_LETTERS[j]}
                 </span>
-                <div>
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    {branch.label}
-                  </span>
-                  <span className="ml-1.5 text-sm text-zinc-400 dark:text-zinc-500">
-                    &mdash; {branch.description}
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    <span className="shrink truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      {branch.label}
+                    </span>
+                    {branch.action && (
+                      <a
+                        href={searchUrl(branch.action)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-sm text-indigo-600 opacity-0 transition-opacity duration-200 group-hover/branch:w-auto group-hover/branch:opacity-100 hover:underline dark:text-indigo-400"
+                      >
+                        → {branch.action}
+                      </a>
+                    )}
+                  </div>
+                  <span className="text-sm text-zinc-400 dark:text-zinc-500">
+                    {branch.description}
                   </span>
                 </div>
               </div>
@@ -151,21 +189,35 @@ function StepRow({
 function MilestoneRow({
   label,
   description,
+  action,
 }: {
   label: string;
   description: string;
+  action?: string;
 }) {
   return (
-    <div className="flex items-start gap-4 py-2">
+    <div className="group/milestone flex items-start gap-4 py-2">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400">
         &#9733;
       </div>
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/30">
+      <div className="min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/30">
         <div className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 dark:text-emerald-500">
           Milestone
         </div>
-        <div className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
-          {label}
+        <div className="flex items-baseline gap-2">
+          <div className="shrink truncate text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+            {label}
+          </div>
+          {action && (
+            <a
+              href={searchUrl(action)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-0 shrink-0 cursor-pointer overflow-hidden whitespace-nowrap text-xs text-emerald-600 opacity-0 transition-opacity duration-200 group-hover/milestone:w-auto group-hover/milestone:opacity-100 hover:underline dark:text-emerald-400"
+            >
+              → {action}
+            </a>
+          )}
         </div>
         <p className="mt-0.5 text-xs text-emerald-700/60 dark:text-emerald-400/60">
           {description}
