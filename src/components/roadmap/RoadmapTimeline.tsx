@@ -75,23 +75,11 @@ export function RoadmapTimeline({
 
         {/* Finish marker */}
         <div className="flex items-center gap-4 pt-2">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md">
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.5 12.75l6 6 9-13.5"
-              />
-            </svg>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-lg shadow-md dark:bg-zinc-200">
+            🪦
           </div>
-          <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-            Goal reached
+          <span className="text-sm italic text-zinc-500 dark:text-zinc-400">
+            ({title})
           </span>
         </div>
       </div>

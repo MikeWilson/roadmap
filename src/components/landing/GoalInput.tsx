@@ -123,76 +123,77 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         </button>
 
         <div className="relative pl-10">
-          {/* Vertical dashed line connecting the two points, fading out at bottom */}
+          {/* Vertical dashed line connecting the three points, fading out at bottom */}
           <div
             className="absolute left-[15px] top-8 bottom-0 w-px border-l-2 border-dashed border-zinc-300 dark:border-zinc-600"
             style={{
-              maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+              maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
             }}
           />
 
-          {/* Starting point — where you are now */}
+          {/* Starting point — today */}
           <div className="relative pb-8">
-            <div className="absolute -left-10 top-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-blue-600 dark:text-blue-400"
+            <div className="-ml-10 flex items-center gap-2">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-blue-600 dark:text-blue-400"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <circle cx="12" cy="12" r="8" />
+                </svg>
+              </div>
+              <label
+                htmlFor="current-state"
+                className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400"
               >
-                <circle cx="12" cy="12" r="3" />
-                <circle cx="12" cy="12" r="8" />
-              </svg>
+                Today
+              </label>
             </div>
-            <label
-              htmlFor="current-state"
-              className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400"
-            >
-              Where you are now
-            </label>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Describe your current experience so we can tailor the roadmap.
-            </p>
             <textarea
               id="current-state"
               value={currentState}
               onChange={(e) => setCurrentState(e.target.value)}
               placeholder={contextPlaceholder}
               rows={4}
-              className="mt-3 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+              className="mt-1.5 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
             />
           </div>
 
-          {/* Destination — where you want to be */}
-          <div className="relative">
-            <div className="absolute -left-10 top-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-emerald-600 dark:text-emerald-400"
-              >
-                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                <line x1="4" x2="4" y1="22" y2="15" />
-              </svg>
+          {/* Destination — someday */}
+          <div className="relative pb-8">
+            <div className="-ml-10 flex items-center gap-2">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-emerald-600 dark:text-emerald-400"
+                >
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                  <line x1="4" x2="4" y1="22" y2="15" />
+                </svg>
+              </div>
+              <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Someday
+              </p>
             </div>
-            <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-              Where you&apos;ll be
-            </p>
-            <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               {goal}
             </p>
             <div className="relative mt-2 min-h-[4.5rem]">
@@ -216,6 +217,16 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
                 }`}
               />
             </div>
+          </div>
+
+          {/* The end */}
+          <div className="-ml-10 flex items-center gap-2 pb-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
+              <span className="text-base">🪦</span>
+            </div>
+            <p className="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              Some other day
+            </p>
           </div>
         </div>
 

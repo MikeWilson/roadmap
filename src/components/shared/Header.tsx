@@ -65,7 +65,7 @@ export function Header() {
             href="/"
             className="text-lg font-bold text-zinc-900 dark:text-zinc-100"
           >
-            Roadmap AI
+            roadmap.🪦
           </Link>
           <div className="relative" ref={menuRef}>
             <button
