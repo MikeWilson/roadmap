@@ -21,19 +21,24 @@ interface RoadmapTimelineProps {
   entries: SpineEntry[];
   title: string;
   description: string;
+  isLoading?: boolean;
 }
 
 export function RoadmapTimeline({
   entries,
   title,
   description,
+  isLoading = false,
 }: RoadmapTimelineProps) {
   let stepNumber = 0;
 
   return (
     <div className="mx-auto max-w-2xl px-4 pb-32 pt-8 sm:px-6">
       {/* Header */}
-      <div className="mb-14">
+      <div
+        className="mb-14"
+        style={{ animation: "step-fade-in 0.5s ease-out both" }}
+      >
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
           {title}
         </h1>
@@ -49,11 +54,15 @@ export function RoadmapTimeline({
         {entries.map((entry, i) => {
           const isMilestone = entry.node.type === "milestone";
           if (!isMilestone) stepNumber++;
-          const isLast = i === entries.length - 1;
+          const isLast = i === entries.length - 1 && !isLoading;
           const currentStep = stepNumber;
 
           return (
-            <div key={entry.node.id} className="relative pb-2">
+            <div
+              key={entry.node.id}
+              className="relative pb-2"
+              style={{ animation: "step-fade-in 0.5s ease-out both" }}
+            >
               {/* Vertical line - runs behind everything */}
               {!isLast && (
                 <div className="absolute left-[19px] top-10 bottom-0 w-px bg-zinc-200 dark:bg-zinc-700" />
@@ -78,15 +87,8 @@ export function RoadmapTimeline({
           );
         })}
 
-        {/* Finish marker */}
-        <div className="flex items-center gap-4 pt-2">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-lg shadow-md dark:bg-zinc-200">
-            🪦
-          </div>
-          <span className="text-sm italic text-zinc-500 dark:text-zinc-400">
-            ({title})
-          </span>
-        </div>
+        {/* Skeleton loading rows */}
+        {isLoading && <SkeletonRows />}
       </div>
     </div>
   );
@@ -153,7 +155,11 @@ function StepRow({
         <div className="ml-[19px] border-l border-zinc-200 pl-6 pt-3 pb-4 sm:pl-8 dark:border-zinc-700">
           <div className="flex flex-col gap-2.5">
             {branches.map((branch, j) => (
-              <div key={branch.id} className="group/branch flex items-start gap-3">
+              <div
+                key={branch.id}
+                className="group/branch flex items-start gap-3"
+                style={{ animation: `step-fade-in 0.5s ease-out ${(j + 1) * 0.06}s both` }}
+              >
                 <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500">
                   {step}
                   {SUBSTEP_LETTERS[j]}
@@ -250,5 +256,42 @@ function MilestoneRow({
         )}
       </div>
     </div>
+  );
+}
+
+/* ── Skeleton loading rows ── */
+
+const SKELETON_WIDTHS = [
+  { title: "w-3/5", desc: "w-4/5" },
+  { title: "w-2/5", desc: "w-3/5" },
+  { title: "w-1/2", desc: "w-2/3" },
+];
+
+function SkeletonRows() {
+  return (
+    <>
+      {SKELETON_WIDTHS.map((widths, i) => (
+        <div
+          key={`skeleton-${i}`}
+          className="relative pb-2"
+          style={{ opacity: 1 - i * 0.3 }}
+        >
+          {i < SKELETON_WIDTHS.length - 1 && (
+            <div className="absolute left-[19px] top-10 bottom-0 w-px bg-zinc-200/50 dark:bg-zinc-700/50" />
+          )}
+          <div className="flex items-start gap-4 animate-pulse">
+            <div className="h-10 w-10 shrink-0 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="flex-1 space-y-2.5 pt-2">
+              <div
+                className={`h-4 ${widths.title} rounded bg-zinc-200 dark:bg-zinc-800`}
+              />
+              <div
+                className={`h-3 ${widths.desc} rounded bg-zinc-100 dark:bg-zinc-800/60`}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
   );
 }
