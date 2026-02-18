@@ -21,16 +21,16 @@ function searchUrl(action: string) {
 
 function YouTubeIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="shrink-0">
-      <rect x="1" y="3" width="12" height="8" rx="2" opacity="0.2" />
-      <path d="M5.5 5v4l3.5-2z" />
+    <svg width="18" height="18" viewBox="0 0 14 14" className="shrink-0 text-white" fill="none">
+      <rect x="1" y="3" width="12" height="8" rx="2" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M5.5 5v4l3.5-2z" fill="currentColor" />
     </svg>
   );
 }
 
 function SearchIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0">
+    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0 text-white">
       <circle cx="5.5" cy="5.5" r="3.5" />
       <path d="M8.5 8.5l3 3" />
     </svg>
