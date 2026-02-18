@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Roadmap AI - Generate Learning Roadmaps with AI",
+  title: "roadmap.rip - Plan Anything to Death",
   description:
-    "Enter any goal and get a visual learning roadmap powered by AI. From hobbies to careers.",
+    "Enter any goal and we'll plan it to death. A beautiful roadmap for your inevitable journey.",
 };
 
 export default function RootLayout({
