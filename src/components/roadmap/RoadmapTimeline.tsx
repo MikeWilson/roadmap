@@ -158,7 +158,7 @@ function StepRow({
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-100 dark:text-zinc-900">
           {step}
         </div>
-        <div className="min-w-0 pt-1.5">
+        <div className="min-w-0 flex-1 pt-1.5">
           <>
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               {label}
@@ -195,7 +195,7 @@ function StepRow({
                   {step}
                   {SUBSTEP_LETTERS[j]}
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
                     {branch.label}
                   </span>
