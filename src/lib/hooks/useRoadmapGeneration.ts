@@ -14,7 +14,11 @@ export type SpineEntry = {
   branches: RoadmapNode[];
 };
 
-export function useRoadmapGeneration(goal: string) {
+export function useRoadmapGeneration(
+  goal: string,
+  goalDescription?: string,
+  context?: string,
+) {
   const { apiKey } = useApiKey();
   const hasSubmitted = useRef(false);
 
@@ -26,9 +30,14 @@ export function useRoadmapGeneration(goal: string) {
   useEffect(() => {
     if (goal && !hasSubmitted.current) {
       hasSubmitted.current = true;
-      submit({ goal, apiKey });
+      submit({
+        goal,
+        apiKey,
+        goalDescription: goalDescription || undefined,
+        context: context || undefined,
+      });
     }
-  }, [goal, apiKey, submit]);
+  }, [goal, apiKey, goalDescription, context, submit]);
 
   // Group nodes into spine entries with their branches
   const entries = useMemo((): SpineEntry[] => {
