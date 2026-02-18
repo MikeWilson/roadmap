@@ -391,9 +391,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
   const [emojiKey, setEmojiKey] = useState(0);
   const hasMounted = useRef(false);
-  const [suggestionIndex, setSuggestionIndex] = useState(
-    () => Math.floor(Math.random() * SUGGESTIONS.length),
-  );
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [goal, setGoal] = useState("");
   const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
@@ -468,6 +466,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   useEffect(() => {
     if (!hasMounted.current) {
       hasMounted.current = true;
+      setSuggestionIndex(Math.floor(Math.random() * SUGGESTIONS.length));
       setEmojis(pickRandom(EMOJIS, 3, []));
       setEmojiKey((k) => k + 1);
     }
