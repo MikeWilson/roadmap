@@ -16,13 +16,13 @@ export default function Home() {
     >
       <Header />
       <main
-        className={`flex flex-1 flex-col items-center px-4 ${
+        className={`flex flex-1 flex-col items-center ${
           step === 2
-            ? "min-h-0 justify-start pt-[72px] sm:pt-20"
-            : "pb-24 sm:pb-16 pt-20 sm:pt-[18vh]"
+            ? "min-h-0 justify-start px-4 pt-[72px] sm:pt-20"
+            : "px-4 pb-24 sm:pb-16 pt-20 sm:pt-[18vh]"
         }`}
       >
-        <div className={step === 1 ? "my-auto" : ""}>
+        <div className={step === 1 ? "my-auto" : "contents"}>
           <GoalInput onStepChange={setStep} />
         </div>
       </main>
