@@ -591,7 +591,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
-    "e.g., I took a physics class in college and can solder basic circuits, but I've never designed my own PCB...",
+    "What you already know, what you've tried, where you're starting from...",
   );
   const [isExpanding, setIsExpanding] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -604,6 +604,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [zipInput, setZipInput] = useState("");
   const expandedGoalRef = useRef<string | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const currentStateRef = useRef<HTMLTextAreaElement | null>(null);
   const goalInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const { apiKey } = useApiKey();
@@ -695,10 +696,23 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     [],
   );
 
+  const currentStateCallbackRef = useCallback(
+    (el: HTMLTextAreaElement | null) => {
+      currentStateRef.current = el;
+      autoResize(el);
+    },
+    [autoResize],
+  );
+
   // Auto-resize when goalDescription changes
   useEffect(() => {
     autoResize(descriptionRef.current);
   }, [goalDescription, autoResize]);
+
+  // Auto-resize when currentState changes
+  useEffect(() => {
+    autoResize(currentStateRef.current);
+  }, [currentState, autoResize]);
 
   const handleGoalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -894,12 +908,13 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               </div>
             )}
             <textarea
+              ref={currentStateCallbackRef}
               id="current-state"
               value={currentState}
               onChange={(e) => setCurrentState(e.target.value)}
               placeholder={contextPlaceholder}
-              rows={4}
-              className="mt-1.5 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-200 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+              rows={1}
+              className="mt-1.5 w-full resize-none overflow-hidden rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-200 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
           </div>
 
