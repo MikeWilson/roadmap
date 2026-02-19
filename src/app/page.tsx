@@ -18,7 +18,7 @@ export default function Home() {
       <main
         className={`flex flex-1 flex-col items-center ${
           step === 2
-            ? "min-h-0 justify-start px-4 pt-24 sm:pt-[18vh]"
+            ? "min-h-0 justify-start px-4 pt-20"
             : "px-4 pb-24 sm:pb-16 pt-28 sm:pt-[20vh]"
         }`}
       >
