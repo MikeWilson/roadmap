@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import { RoadmapTimeline } from "@/components/roadmap/RoadmapTimeline";
 import { RoadmapLoading } from "@/components/roadmap/RoadmapLoading";
 import { Header } from "@/components/shared/Header";
-import { SafetyPrivacyFooter } from "@/components/shared/SafetyPrivacyFooter";
 import { useRoadmapGeneration } from "@/lib/hooks/useRoadmapGeneration";
 
 function RoadmapContent() {
@@ -44,7 +43,6 @@ function RoadmapContent() {
           />
         )}
       </div>
-      <SafetyPrivacyFooter />
     </div>
   );
 }

@@ -29,7 +29,7 @@ export function SafetyPrivacyFooter() {
           onClick={() => setOpen(true)}
           className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
         >
-          Safety & Privacy
+          Safety & privacy
         </button>
       </footer>
 
@@ -62,7 +62,7 @@ export function SafetyPrivacyFooter() {
             </button>
 
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-              Safety & Privacy
+              Safety & privacy
             </h2>
 
             <div className="space-y-4 text-sm text-zinc-600 dark:text-zinc-400">
