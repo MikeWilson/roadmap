@@ -669,7 +669,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
     if (!el) return;
-    el.style.height = "auto";
+    el.style.height = "0";
     el.style.height = el.scrollHeight + "px";
   }, []);
 
