@@ -62,8 +62,9 @@ export async function runResearch({
     "",
     "Return:",
     "- 3-6 short bullets summarizing the typical learning phases or",
-    "  widely recommended FREE resources (YouTube channels, wikis, forums,",
-    "  community guides) at a high level. Prioritize free over paid.",
+    "  widely recommended open knowledge sources (Wikipedia, YouTube channels,",
+    "  MIT OpenCourseWare, wikis, forums, official docs, community guides)",
+    "  at a high level. Prioritize open public knowledge over courses of any kind.",
     "- A line starting with 'Sources:' followed by 3-6 URLs.",
     "Keep the response under 120 words.",
   ];
