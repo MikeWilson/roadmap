@@ -7,7 +7,6 @@ import {
   type RoadmapData,
   type RoadmapNode,
 } from "@/app/api/generate-roadmap/schema";
-import { useApiKey } from "./useApiKey";
 
 export type SpineEntry = {
   node: RoadmapNode;
@@ -20,7 +19,6 @@ export function useRoadmapGeneration(
   context?: string,
   location?: string,
 ) {
-  const { apiKey } = useApiKey();
   const hasSubmitted = useRef(false);
 
   const { object, submit, isLoading, error } = useObject({
@@ -33,13 +31,12 @@ export function useRoadmapGeneration(
       hasSubmitted.current = true;
       submit({
         goal,
-        apiKey,
         goalDescription: goalDescription || undefined,
         context: context || undefined,
         location: location || undefined,
       });
     }
-  }, [goal, apiKey, goalDescription, context, location, submit]);
+  }, [goal, goalDescription, context, location, submit]);
 
   // Group nodes into spine entries with their branches
   const entries = useMemo((): SpineEntry[] => {

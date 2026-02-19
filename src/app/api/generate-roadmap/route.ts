@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const { goal, apiKey, goalDescription, context, location } = await req.json();
+  const { goal, goalDescription, context, location } = await req.json();
 
   if (!goal || typeof goal !== "string") {
     return new Response("Goal is required", { status: 400 });
@@ -45,11 +45,9 @@ export async function POST(req: Request) {
     return new Response(`Location must be under ${MAX_LOCATION_LENGTH} characters`, { status: 400 });
   }
 
-  const key = apiKey || process.env.OPENAI_API_KEY;
+  const key = process.env.OPENAI_API_KEY;
   if (!key) {
-    return new Response("No API key provided. Set one via the header button.", {
-      status: 401,
-    });
+    return new Response("OpenAI API key not configured.", { status: 500 });
   }
 
   const openai = createOpenAI({ apiKey: key });
