@@ -19,7 +19,8 @@ Rules:
 10. Spine and milestone nodes should have side "center", branch nodes alternate "left" and "right"
 11. Milestone nodes should have parentId set to null and be ordered sequentially with spine nodes
 12. Every node MUST include a concise "action" — a short, clickable label pointing the learner to a specific resource. Actions are displayed as links, so keep them short and name-oriented:
-    - Format as a resource name, not a command. Examples: "Soldering basics on YouTube", "Ohm's Law article on Khan Academy", "r/electronics beginner FAQ", "freeCodeCamp JavaScript course", "Build a LED blinker project"
+    - Format as a resource name or search-query noun phrase, not a full sentence or command. Examples: "YouTube: soldering basics", "Ohm's Law (Khan Academy)", "r/electronics beginner FAQ", "freeCodeCamp JavaScript course", "LED blinker mini-project"
+    - Avoid vague filler like "local spots" or "some nearby places" — include a concrete resource type
     - Keep under 40 characters when possible — these are link labels, not instructions
     - Reference freely available resources: YouTube, Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers, Wikipedia, subreddits, or specific beginner projects
     - For milestone nodes, use a short self-assessment or mini-project name (e.g., "Build a basic amplifier circuit")`;
@@ -58,7 +59,9 @@ Tailor the roadmap to their existing knowledge. You can move quickly through are
 
   if (location) {
     prompt += `\n\nSince the user is in ${location}:
-- ACTIONS MUST be localized — include "${location}" in action labels whenever a local resource, event, class, shop, or community exists. Examples: "${location} 5K events", "${location} pottery classes", "${location} running clubs on Meetup", "guitar lessons near ${location}". Make these feel like real search queries someone would type.
+- ACTIONS MUST be localized — include "${location}" in action labels whenever a local resource, event, class, shop, or community exists.
+- Localized actions should be specific and query-like: include a concrete resource type + location. Examples: "${location} fly shop", "fly fishing access map ${location}", "${location} fishing regulations", "${location} fly-fishing club Meetup".
+- Avoid vague phrasing like "local spots" or "some nearby places". If the location is a county or ZIP, prefer a nearby city/metro name when possible, or use "near ${location}" plus a resource type.
 - Reference local regulations, climate, terrain, or seasons where relevant (e.g., growing zones for gardening, local permits, weather considerations).
 - Prefer naming real local resources when obvious (e.g., community colleges, parks, known local shops) but generic localized searches are fine too.
 - Keep it natural — not every action needs the location, only the ones where locality genuinely matters (classes, events, meetups, shops, communities, regulations). Online resources like YouTube or Khan Academy don't need it.`;
