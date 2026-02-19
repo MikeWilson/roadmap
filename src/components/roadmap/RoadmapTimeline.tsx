@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
+import { FeedbackButtons } from "./FeedbackButtons";
 
 function searchUrl(action: string) {
   const lower = action.toLowerCase();
@@ -178,6 +179,7 @@ interface RoadmapTimelineProps {
   title: string;
   description: string;
   isLoading?: boolean;
+  prompt?: string;
 }
 
 export function RoadmapTimeline({
@@ -185,6 +187,7 @@ export function RoadmapTimeline({
   title,
   description,
   isLoading = false,
+  prompt = "",
 }: RoadmapTimelineProps) {
   let stepNumber = 0;
 
@@ -251,6 +254,14 @@ export function RoadmapTimeline({
         {/* Skeleton loading rows */}
         {isLoading && <SkeletonRows />}
       </div>
+
+      {/* Feedback */}
+      {!isLoading && entries.length > 0 && (
+        <FeedbackButtons
+          prompt={prompt}
+          response={`${title}: ${description}. Steps: ${entries.map((e) => e.node.label).join(", ")}`}
+        />
+      )}
     </div>
   );
 }

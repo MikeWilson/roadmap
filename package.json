@@ -12,6 +12,7 @@
     "@ai-sdk/openai": "^3.0.29",
     "@ai-sdk/react": "^3.0.93",
     "@dagrejs/dagre": "^2.0.4",
+    "@vercel/analytics": "^1.6.1",
     "@xyflow/react": "^12.10.0",
     "ai": "^6.0.91",
     "next": "16.1.6",

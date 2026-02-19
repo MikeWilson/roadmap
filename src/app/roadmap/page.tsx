@@ -39,6 +39,7 @@ function RoadmapContent() {
             title={title}
             description={description}
             isLoading={isLoading}
+            prompt={goal}
           />
         )}
       </div>
