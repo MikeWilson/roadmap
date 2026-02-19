@@ -587,6 +587,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const lastTextMatchRef = useRef<{ theme: ThemeKey; leadEmoji?: string } | null>(null);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [goal, setGoal] = useState("");
+  const [goalEmoji, setGoalEmoji] = useState("🎯");
   const [hasEngaged, setHasEngaged] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
@@ -755,6 +756,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     setSuggestionIndex((i) => {
       const nextIndex = (i + 1) % SUGGESTIONS.length;
       setGoal(SUGGESTIONS[nextIndex][1]);
+      setGoalEmoji(SUGGESTIONS[nextIndex][0]);
       setEmojis((prev) => pickThemedEmojisForSuggestion(nextIndex, prev));
       setEmojiKey((k) => k + 1);
       return nextIndex;
@@ -822,22 +824,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           {/* Starting point — today */}
           <div className="relative pb-8">
             <div className="-ml-10 flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-blue-600 dark:text-blue-400"
-                >
-                  <circle cx="12" cy="12" r="3" />
-                  <circle cx="12" cy="12" r="8" />
-                </svg>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                <span className="text-base">📅</span>
               </div>
               <label
                 htmlFor="current-state"
@@ -921,22 +909,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           {/* Destination — someday */}
           <div className="relative pb-8">
             <div className="-ml-10 flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-emerald-600 dark:text-emerald-400"
-                >
-                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                  <line x1="4" x2="4" y1="22" y2="15" />
-                </svg>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900">
+                <span className="text-base">{goalEmoji}</span>
               </div>
               <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 Soon
@@ -1031,9 +1005,13 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
                 return;
               }
 
+              const suggestionMatch = SUGGESTIONS.find(([, t]) => t.toLowerCase() === trimmed.toLowerCase());
+              if (suggestionMatch) setGoalEmoji(suggestionMatch[0]);
+
               const match = getTextMatch(trimmed);
               if (match) {
                 setHasEngaged(true);
+                if (!suggestionMatch && match.leadEmoji) setGoalEmoji(match.leadEmoji);
                 const prevMatch = lastTextMatchRef.current;
                 const isSameMatch =
                   prevMatch?.theme === match.theme &&
@@ -1094,6 +1072,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               setHasEngaged(true);
               lastTextMatchRef.current = null;
               setGoal(text);
+              setGoalEmoji(emoji);
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
               window.scrollTo({ top: 0, behavior: "smooth" });
