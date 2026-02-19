@@ -87,7 +87,7 @@ export async function POST(req: Request) {
     schema: roadmapSchema,
     system: buildSystemPrompt(),
     prompt: userPrompt,
-    temperature: 0.7,
+    temperature: 0.3,
     maxOutputTokens: 8192,
   });
 
