@@ -61,6 +61,54 @@ body {
   animation: pill-fade-in 0.3s ease-out forwards;
 }
 
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (max-width: 639px) {
+  .animate-gradient-text {
+    background: linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #a8a8a8 25%,
+      #ffffff 50%,
+      #a8a8a8 75%,
+      #ffffff 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 3s ease-in-out infinite;
+  }
+}
+
+@media (max-width: 639px) and (prefers-color-scheme: dark) {
+  .animate-gradient-text {
+    background: linear-gradient(
+      90deg,
+      #18181b 0%,
+      #52525b 25%,
+      #18181b 50%,
+      #52525b 75%,
+      #18181b 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 3s ease-in-out infinite;
+  }
+}
+
 @keyframes step-fade-in {
   from {
     opacity: 0;

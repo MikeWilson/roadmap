@@ -980,12 +980,16 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         </div>
 
         <div className="mt-6">
+          {/* Spacer for fixed button on mobile */}
+          <div className="h-16 sm:hidden" />
+        </div>
+        <div className="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-t from-white via-white to-transparent px-4 pb-5 pt-6 sm:relative sm:inset-auto sm:z-auto sm:bg-none sm:p-0 dark:from-zinc-950 dark:via-zinc-950">
           <button
             onClick={handleGenerate}
             disabled={!goal.trim() || isExpanding}
-            className="w-full rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className="w-full rounded-xl bg-zinc-900 px-6 py-3.5 text-lg font-semibold transition-colors hover:bg-zinc-700 disabled:opacity-40 sm:py-3 sm:text-base sm:font-medium sm:text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
-            Generate Roadmap
+            <span className="animate-gradient-text">Generate Roadmap</span>
           </button>
         </div>
       </div>
