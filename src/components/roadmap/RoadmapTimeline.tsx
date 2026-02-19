@@ -186,7 +186,7 @@ function StepRow({
     <div>
       {/* Step header */}
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-100 dark:text-zinc-900">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-800 dark:text-zinc-100">
           {step}
         </div>
         <div className="min-w-0 flex-1 pt-1.5">
