@@ -23,7 +23,12 @@ Rules:
     - Avoid vague filler like "local spots" or "some nearby places" — include a concrete resource type
     - Keep under 40 characters when possible — these are link labels, not instructions
     - Reference freely available resources: YouTube, Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers, Wikipedia, subreddits, or specific beginner projects
-    - For milestone nodes, use a short self-assessment or mini-project name (e.g., "Build a basic amplifier circuit")`;
+    - For milestone nodes, use a short self-assessment or mini-project name (e.g., "Build a basic amplifier circuit")
+13. Ensure at least one early milestone is a real-world "do the thing" attempt with minimal prerequisites (within the first 1-3 spine nodes).
+    - This should be an action-focused checkpoint like "Catch a first fish", "Sketch 10 portraits", "Ship a tiny app", "Cook a full meal".
+    - Avoid making the first milestone a class, course, or certification unless the goal is explicitly classroom-based.
+14. Apply judgment and leave wiggle room — hobbies vary widely, so prefer flexible sequencing over rigid step-by-step prescriptions.
+    - When in doubt, bias toward "get out and do it" experiences rather than more prep or coursework.`;
 }
 
 export function buildUserPrompt(
