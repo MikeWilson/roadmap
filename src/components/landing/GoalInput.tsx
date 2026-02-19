@@ -828,7 +828,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             expandedGoalRef.current = null;
             setSafetyError(null);
           }}
-          className="mb-4 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200 sm:mb-6"
+          className="mb-6 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
