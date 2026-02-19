@@ -7,11 +7,9 @@ import {
   type RoadmapData,
   type RoadmapNode,
 } from "@/app/api/generate-roadmap/schema";
+import { groupIntoSpineEntries } from "@/lib/roadmap/transform";
 
-export type SpineEntry = {
-  node: RoadmapNode;
-  branches: RoadmapNode[];
-};
+export type { SpineEntry } from "@/lib/roadmap/transform";
 
 export function useRoadmapGeneration(
   goal: string,
@@ -38,8 +36,7 @@ export function useRoadmapGeneration(
     }
   }, [goal, goalDescription, context, location, submit]);
 
-  // Group nodes into spine entries with their branches
-  const entries = useMemo((): SpineEntry[] => {
+  const entries = useMemo(() => {
     if (!object?.nodes || object.nodes.length === 0) return [];
 
     const completeNodes = object.nodes.filter(
@@ -48,28 +45,34 @@ export function useRoadmapGeneration(
         n.id != null &&
         n.label != null &&
         n.type != null &&
-        n.order != null
+        n.order != null,
     );
 
-    // Spine + milestone nodes form the main path
-    const spineNodes = completeNodes
-      .filter((n) => n.type === "spine" || n.type === "milestone")
-      .sort((a, b) => a.order - b.order);
+    return groupIntoSpineEntries(completeNodes);
+  }, [object]);
 
-    // Group branches by parentId
-    const branchesByParent = new Map<string, RoadmapNode[]>();
-    for (const node of completeNodes) {
-      if (node.type === "branch" && node.parentId) {
-        const existing = branchesByParent.get(node.parentId) || [];
-        existing.push(node);
-        branchesByParent.set(node.parentId, existing);
-      }
+  // Roadmap data for URL encoding — updates progressively as nodes stream in
+  const roadmapData = useMemo((): RoadmapData | null => {
+    if (!object?.title || !object?.description || !object?.nodes) {
+      return null;
     }
 
-    return spineNodes.map((node) => ({
-      node,
-      branches: branchesByParent.get(node.id) || [],
-    }));
+    const completeNodes = object.nodes.filter(
+      (n): n is RoadmapNode =>
+        n != null &&
+        n.id != null &&
+        n.label != null &&
+        n.type != null &&
+        n.order != null,
+    );
+
+    if (completeNodes.length === 0) return null;
+
+    return {
+      title: object.title,
+      description: object.description,
+      nodes: completeNodes,
+    };
   }, [object]);
 
   return {
@@ -78,5 +81,6 @@ export function useRoadmapGeneration(
     error: error?.message || null,
     title: object?.title || "",
     description: object?.description || "",
+    roadmapData,
   };
 }
