@@ -30,6 +30,8 @@ export function buildUserPrompt(
   goalDescription?: string,
   context?: string,
   location?: string,
+  researchSummary?: string,
+  researchSources?: string[],
 ): string {
   let prompt = `Create a complete learning roadmap for: "${goal}"`;
 
@@ -60,6 +62,15 @@ Tailor the roadmap to their existing knowledge. You can move quickly through are
 - Reference local regulations, climate, terrain, or seasons where relevant (e.g., growing zones for gardening, local permits, weather considerations).
 - Prefer naming real local resources when obvious (e.g., community colleges, parks, known local shops) but generic localized searches are fine too.
 - Keep it natural — not every action needs the location, only the ones where locality genuinely matters (classes, events, meetups, shops, communities, regulations). Online resources like YouTube or Khan Academy don't need it.`;
+  }
+
+  if (researchSummary) {
+    prompt += `\n\nResearch gut-check (quick web scan):\n${researchSummary}`;
+    if (researchSources && researchSources.length > 0) {
+      prompt += `\nSources: ${researchSources.join(", ")}`;
+    }
+    prompt +=
+      "\nUse this only to validate high-level sequencing and safety. Do not overfit to any single source.";
   }
 
   return prompt;
