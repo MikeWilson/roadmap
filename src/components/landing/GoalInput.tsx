@@ -607,6 +607,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const currentStateRef = useRef<HTMLTextAreaElement | null>(null);
   const goalInputRef = useRef<HTMLInputElement | null>(null);
+  const hoveredSuggestionRef = useRef<number | null>(null);
   const router = useRouter();
 
   const requestLocation = useCallback(() => {
@@ -1133,12 +1134,18 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               lastTextMatchRef.current = null;
               setGoal(text);
               setGoalEmoji(emoji);
-              setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
-              setEmojiKey((k) => k + 1);
+              if (hoveredSuggestionRef.current !== index) {
+                setEmojis((prev) =>
+                  pickThemedEmojisForSuggestion(index, prev),
+                );
+                setEmojiKey((k) => k + 1);
+              }
+              hoveredSuggestionRef.current = null;
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onMouseEnter={() => {
               if (goal.trim()) return;
+              hoveredSuggestionRef.current = index;
               setHasEngaged(true);
               lastTextMatchRef.current = null;
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
