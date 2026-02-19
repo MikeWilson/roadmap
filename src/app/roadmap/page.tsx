@@ -13,6 +13,7 @@ function RoadmapContent() {
   const goalDescription = searchParams.get("goalDescription") || undefined;
   const context = searchParams.get("context") || undefined;
   const location = searchParams.get("location") || undefined;
+  const emojiTheme = searchParams.get("emojiTheme") || undefined;
   const { entries, isLoading, error, title, description } =
     useRoadmapGeneration(goal, goalDescription, context, location);
 
@@ -31,7 +32,7 @@ function RoadmapContent() {
           </div>
         ) : isLoading && entries.length === 0 ? (
           <div className="flex flex-1 items-center justify-center">
-            <RoadmapLoading goal={goal} />
+            <RoadmapLoading goal={goal} emojiTheme={emojiTheme} />
           </div>
         ) : (
           <RoadmapTimeline

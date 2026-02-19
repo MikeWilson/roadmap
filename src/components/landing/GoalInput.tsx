@@ -804,6 +804,10 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     if (location.trim()) {
       params.set("location", location.trim());
     }
+    const theme = PILL_THEME[goalEmoji] ?? lastTextMatchRef.current?.theme;
+    if (theme) {
+      params.set("emojiTheme", theme);
+    }
     track("generate_roadmap", {
       goal: goal.trim(),
       goalDescription: goalDescription.trim().slice(0, 500),

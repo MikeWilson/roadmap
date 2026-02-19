@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { getEmojisForGoal } from "@/lib/emojiThemes";
+import { getEmojisForTheme, getEmojisForGoal } from "@/lib/emojiThemes";
 
 function pickRandom(pool: string[], exclude: string[]): string {
   const available = pool.filter((e) => !exclude.includes(e));
@@ -9,8 +9,10 @@ function pickRandom(pool: string[], exclude: string[]): string {
   return source[Math.floor(Math.random() * source.length)];
 }
 
-export function RoadmapLoading({ goal }: { goal: string }) {
-  const poolRef = useRef(getEmojisForGoal(goal));
+export function RoadmapLoading({ goal, emojiTheme }: { goal: string; emojiTheme?: string }) {
+  const poolRef = useRef(
+    (emojiTheme && getEmojisForTheme(emojiTheme)) || getEmojisForGoal(goal),
+  );
   const pool = poolRef.current;
 
   const [current, setCurrent] = useState(() => ({
