@@ -192,7 +192,7 @@ export function RoadmapTimeline({
   let stepNumber = 0;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
+    <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
       {/* Header */}
       <div
         className="mb-6 sm:mb-10"
@@ -303,7 +303,7 @@ function StepRow({
                 href={searchUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
               >
                 <ActionBadge action={action} />
                 <span className="min-w-0 truncate">{action}</span>
@@ -340,7 +340,7 @@ function StepRow({
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card mt-1 flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                      className="group/card mt-1 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
                     >
                       <ActionBadge action={branch.action} />
                       <span className="min-w-0 truncate">
@@ -395,7 +395,7 @@ function MilestoneRow({
             href={searchUrl(action)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
+            className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 sm:w-fit"
           >
             <ActionBadge action={action} />
             <span className="min-w-0 truncate">{action}</span>

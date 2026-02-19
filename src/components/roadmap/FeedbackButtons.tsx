@@ -45,7 +45,7 @@ export function FeedbackButtons({ prompt, response }: FeedbackButtonsProps) {
           }`}
           aria-label="Thumbs up"
         >
-          👍
+          <span className="inline-flex [filter:saturate(0)]">👍</span>
         </button>
         <button
           onClick={() => handleFeedback("negative")}
@@ -59,7 +59,7 @@ export function FeedbackButtons({ prompt, response }: FeedbackButtonsProps) {
           }`}
           aria-label="Thumbs down"
         >
-          👎
+          <span className="inline-flex [filter:saturate(0)]">👎</span>
         </button>
       </div>
       {submitted && (
