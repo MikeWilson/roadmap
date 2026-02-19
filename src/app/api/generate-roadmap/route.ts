@@ -3,6 +3,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { roadmapSchema } from "./schema";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompt";
 import { runResearch } from "@/lib/ai/research";
+import { checkGoalSafety } from "@/lib/ai/safety";
 import { rateLimit } from "@/lib/rate-limit";
 import { headers } from "next/headers";
 
@@ -48,6 +49,13 @@ export async function POST(req: Request) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
     return new Response("OpenAI API key not configured.", { status: 500 });
+  }
+
+  // Safety check: reject inappropriate goals before spending tokens on research/generation.
+  const safetyInput = [goal, goalDescription, context].filter(Boolean).join(" — ");
+  const safety = await checkGoalSafety(safetyInput, key);
+  if (!safety.safe) {
+    return new Response(safety.reason, { status: 400 });
   }
 
   const openai = createOpenAI({ apiKey: key });
