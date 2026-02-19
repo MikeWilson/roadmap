@@ -9,7 +9,7 @@ export const roadmapNodeSchema = z.object({
   action: z
     .string()
     .describe(
-      'A specific, concrete next action the learner should take right now. Must start with a verb and reference a real, freely available resource or searchable query. Examples: \'Search YouTube for "beginner soldering tutorial"\', \'Read the MDN guide on HTML basics\', \'Google "how to tune a guitar by ear"\', \'Complete the free Codecademy intro to Python course\''
+      'A specific, concrete resource label or search-query phrase. Keep it short and concrete, referencing a real, freely available resource or a searchable query. Avoid full sentences or vague filler. Examples: \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\', \'Codecademy intro to Python (free)\''
     ),
   type: z.enum(["spine", "branch", "milestone"]).describe(
     "spine = main vertical path item, branch = sub-topic off the spine, milestone = checkpoint/goal"

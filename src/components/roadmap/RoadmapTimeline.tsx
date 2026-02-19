@@ -10,11 +10,18 @@ function searchUrl(action: string) {
       .replace(/\bon\s+youtube\b/gi, "")
       .replace(/\byoutube\b/gi, "")
       .replace(/\b(search|watch|find|look up|browse)\b\s*(for)?\s*/gi, "")
-      .replace(/^["'\s\-–—]+|["'\s\-–—]+$/g, "")
+      .replace(/^["':\s\-–—]+|["':\s\-–—]+$/g, "")
       .trim();
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
   }
-  return `https://www.google.com/search?q=${encodeURIComponent(action)}`;
+  const cleaned = action
+    .replace(
+      /^(attend|join|take|enroll|sign up|register|book|buy|shop|visit|learn|start|try|get|find|search|look up|browse)\b\s*/i,
+      "",
+    )
+    .replace(/^["':\s\-–—]+|["':\s\-–—]+$/g, "")
+    .trim();
+  return `https://www.google.com/search?q=${encodeURIComponent(cleaned || action)}`;
 }
 
 /* ── Destination icons ── */
@@ -75,7 +82,6 @@ function ActionBadge({ action }: { action: string }) {
   return (
     <span className="flex shrink-0 items-center gap-1">
       {isYouTube ? <YouTubeIcon /> : <SearchIcon />}
-      <ExternalIcon className="hidden sm:inline-flex" />
     </span>
   );
 }
@@ -196,11 +202,11 @@ function StepRow({
                 href={searchUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 sm:w-auto dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
               >
                 <ActionBadge action={action} />
                 <span className="min-w-0 truncate">{action}</span>
-                <ExternalIcon className="sm:hidden" />
+                <ExternalIcon className="inline-flex" />
               </a>
             )}
           </>
@@ -233,13 +239,13 @@ function StepRow({
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card mt-1 flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 sm:w-auto dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
+                      className="group/card mt-1 flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
                     >
                       <ActionBadge action={branch.action} />
                       <span className="min-w-0 truncate">
                         {branch.action}
                       </span>
-                      <ExternalIcon className="sm:hidden" />
+                      <ExternalIcon className="inline-flex" />
                     </a>
                   )}
                 </div>
@@ -288,11 +294,11 @@ function MilestoneRow({
             href={searchUrl(action)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 sm:w-auto dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
+            className="group/card mt-1.5 inline-flex min-w-0 max-w-full w-fit items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
           >
             <ActionBadge action={action} />
             <span className="min-w-0 truncate">{action}</span>
-            <ExternalIcon className="sm:hidden" />
+            <ExternalIcon className="inline-flex" />
           </a>
         )}
       </div>
