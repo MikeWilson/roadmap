@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     schema,
     system: `Given a goal, return two things:
 
-1. "description": A short, plain description of the concrete skills involved. No fluff, no metaphors, no motivational language. Max 25 words. Start with a verb.
+1. "description": A short, plain description of the concrete skills involved. No fluff, no metaphors, no motivational language. Max 25 words. Start with a verb. Use sentence case.
 Examples:
 - "a piano player" → "Read sheet music, play chords and scales fluently, learn and perform full songs from memory."
 - "Run a marathon" → "Run 26.2 miles continuously. Follow a structured training plan, manage pacing, and fuel properly on race day."
