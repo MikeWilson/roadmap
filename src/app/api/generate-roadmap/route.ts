@@ -2,6 +2,7 @@ import { streamObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { roadmapSchema } from "./schema";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompt";
+import { runResearch } from "@/lib/ai/research";
 
 export const maxDuration = 60;
 
@@ -20,12 +21,24 @@ export async function POST(req: Request) {
   }
 
   const openai = createOpenAI({ apiKey: key });
+  const research = await runResearch({
+    goal,
+    location: typeof location === "string" ? location : undefined,
+    apiKey: key,
+  });
 
   const result = streamObject({
     model: openai("gpt-4o"),
     schema: roadmapSchema,
     system: buildSystemPrompt(),
-    prompt: buildUserPrompt(goal, goalDescription, context, location),
+    prompt: buildUserPrompt(
+      goal,
+      goalDescription,
+      context,
+      location,
+      research?.summary,
+      research?.sources,
+    ),
     temperature: 0.7,
   });
 
