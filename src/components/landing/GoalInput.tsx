@@ -1008,9 +1008,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           <button
             onClick={handleGenerate}
             disabled={!goal.trim() || isExpanding}
-            className="w-full rounded-xl bg-zinc-900 px-6 py-3.5 text-lg font-semibold transition-colors hover:bg-zinc-700 disabled:opacity-40 sm:py-3 sm:text-base sm:font-medium sm:text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            className="w-full cursor-pointer rounded-xl bg-zinc-900 px-6 py-3.5 text-lg font-semibold transition-colors hover:bg-zinc-700 disabled:opacity-40 sm:py-3 sm:text-base sm:font-medium sm:text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
           >
-            <span className="animate-gradient-text">Generate Roadmap</span>
+            <span className="animate-gradient-text">Generate roadmap</span>
           </button>
         </div>
       </div>
