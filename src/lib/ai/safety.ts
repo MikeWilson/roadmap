@@ -31,9 +31,11 @@ export async function checkGoalSafety(
       llmSafetyCheck(input, apiKey),
     ]);
 
-    if (!modResult.safe) return modResult;
+    // The LLM classifier is purpose-built for this app – reject if it says UNSAFE.
     if (!llmResult.safe) return llmResult;
 
+    // The moderation API can produce false positives for benign goals like
+    // "write a novel".  When the LLM classifier deems the goal safe, trust it.
     return { safe: true };
   } catch {
     // Fail open – don't block roadmap generation if safety check itself errors.
@@ -72,13 +74,10 @@ async function moderationCheck(
     const result = data.results?.[0];
     if (!result?.flagged) return { safe: true };
 
-    const flagged = Object.entries(result.categories ?? {})
-      .filter(([, v]) => v)
-      .map(([k]) => k);
-
     return {
       safe: false,
-      reason: `This goal was flagged for: ${flagged.join(", ")}. Please enter a constructive learning goal.`,
+      reason:
+        "Rejected. Please try another hobby, skill, or topic you'd like to learn about.",
     };
   } catch {
     return { safe: true };
