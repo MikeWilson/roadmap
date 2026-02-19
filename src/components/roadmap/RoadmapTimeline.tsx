@@ -11,6 +11,8 @@ function searchUrl(action: string) {
       .replace(/\bon\s+youtube\b/gi, "")
       .replace(/\byoutube\b/gi, "")
       .replace(/\b(search|watch|find|look up|browse)\b\s*(for)?\s*/gi, "")
+      .replace(/\byour\b/gi, "my")
+      .replace(/\byou\b/gi, "me")
       .replace(/^["':\s\-–—]+|["':\s\-–—]+$/g, "")
       .trim();
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
@@ -20,6 +22,8 @@ function searchUrl(action: string) {
       /^(attend|join|take|enroll|sign up|register|book|buy|shop|visit|learn|start|try|get|find|search|look up|browse)\b\s*/i,
       "",
     )
+    .replace(/\byour\b/gi, "my")
+    .replace(/\byou\b/gi, "me")
     .replace(/^["':\s\-–—]+|["':\s\-–—]+$/g, "")
     .trim();
   return `https://www.google.com/search?q=${encodeURIComponent(cleaned || action)}`;
