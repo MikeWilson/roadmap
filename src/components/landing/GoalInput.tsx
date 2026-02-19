@@ -824,12 +824,12 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           {/* Starting point — today */}
           <div className="relative pb-8">
             <div className="-ml-10 flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
                 <span className="text-base">📅</span>
               </div>
               <label
                 htmlFor="current-state"
-                className="text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400"
+                className="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
               >
                 Today
               </label>
@@ -909,10 +909,10 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           {/* Destination — someday */}
           <div className="relative pb-8">
             <div className="-ml-10 flex items-center gap-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
                 <span className="text-base">{goalEmoji}</span>
               </div>
-              <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <p className="text-xs font-medium uppercase tracking-wider text-zinc-700 dark:text-white">
                 Soon
               </p>
             </div>
