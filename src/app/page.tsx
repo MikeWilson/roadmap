@@ -19,10 +19,12 @@ export default function Home() {
         className={`flex flex-1 flex-col items-center px-4 ${
           step === 2
             ? "min-h-0 justify-start pt-[72px] sm:pt-20"
-            : "justify-center pb-16 pt-20 sm:pt-[18vh]"
+            : "pb-24 sm:pb-16 pt-20 sm:pt-[18vh]"
         }`}
       >
-        <GoalInput onStepChange={setStep} />
+        <div className={step === 1 ? "my-auto" : ""}>
+          <GoalInput onStepChange={setStep} />
+        </div>
       </main>
     </div>
   );
