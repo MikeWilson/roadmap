@@ -73,7 +73,7 @@ export function RoadmapLoading({ goal }: { goal: string }) {
       </div>
       <div className="text-center">
         <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
-          Digging your roadmap...
+          Creating your roadmap...
         </p>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
           &ldquo;{goal}&rdquo;
