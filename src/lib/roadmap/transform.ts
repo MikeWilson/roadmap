@@ -1,5 +1,39 @@
-import type { RoadmapData } from "@/app/api/generate-roadmap/schema";
+import type { RoadmapData, RoadmapNode } from "@/app/api/generate-roadmap/schema";
 import type { RoadmapFlowNode, RoadmapFlowEdge } from "./types";
+
+export type SpineEntry = {
+  node: RoadmapNode;
+  branches: RoadmapNode[];
+};
+
+export function groupIntoSpineEntries(nodes: RoadmapNode[]): SpineEntry[] {
+  const completeNodes = nodes.filter(
+    (n): n is RoadmapNode =>
+      n != null &&
+      n.id != null &&
+      n.label != null &&
+      n.type != null &&
+      n.order != null,
+  );
+
+  const spineNodes = completeNodes
+    .filter((n) => n.type === "spine" || n.type === "milestone")
+    .sort((a, b) => a.order - b.order);
+
+  const branchesByParent = new Map<string, RoadmapNode[]>();
+  for (const node of completeNodes) {
+    if (node.type === "branch" && node.parentId) {
+      const existing = branchesByParent.get(node.parentId) || [];
+      existing.push(node);
+      branchesByParent.set(node.parentId, existing);
+    }
+  }
+
+  return spineNodes.map((node) => ({
+    node,
+    branches: branchesByParent.get(node.id) || [],
+  }));
+}
 
 export function transformToFlowElements(data: RoadmapData): {
   nodes: RoadmapFlowNode[];

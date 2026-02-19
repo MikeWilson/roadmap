@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
+import type { RoadmapData } from "@/app/api/generate-roadmap/schema";
+import { updateUrlWithRoadmap } from "@/lib/roadmap/url-codec";
 import { FeedbackButtons } from "./FeedbackButtons";
 
 function searchUrl(action: string) {
@@ -197,6 +199,8 @@ interface RoadmapTimelineProps {
   description: string;
   isLoading?: boolean;
   prompt?: string;
+  initialCheckedSteps?: Set<string>;
+  roadmapData?: RoadmapData | null;
 }
 
 export function RoadmapTimeline({
@@ -205,17 +209,30 @@ export function RoadmapTimeline({
   description,
   isLoading = false,
   prompt = "",
+  initialCheckedSteps,
+  roadmapData,
 }: RoadmapTimelineProps) {
   let stepNumber = 0;
-  const [checkedSteps, setCheckedSteps] = useState<Set<string>>(new Set());
+  const [checkedSteps, setCheckedSteps] = useState<Set<string>>(
+    () => initialCheckedSteps ?? new Set(),
+  );
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const toggleStep = useCallback((id: string) => {
     setCheckedSteps(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+
+      if (roadmapData) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+          updateUrlWithRoadmap(roadmapData, next);
+        }, 300);
+      }
+
       return next;
     });
-  }, []);
+  }, [roadmapData]);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
