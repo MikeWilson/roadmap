@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       research?.sources,
     ),
     temperature: 0.7,
-    maxOutputTokens: 4096,
+    maxOutputTokens: 8192,
   });
 
   return result.toTextStreamResponse();
