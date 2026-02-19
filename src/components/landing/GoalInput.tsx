@@ -468,6 +468,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const [zipInput, setZipInput] = useState("");
   const expandedGoalRef = useRef<string | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const goalInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const { apiKey } = useApiKey();
 
@@ -602,9 +603,17 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     setHasEngaged(true);
     setSuggestionIndex((i) => {
       const nextIndex = (i + 1) % SUGGESTIONS.length;
+      setGoal(SUGGESTIONS[nextIndex][1]);
       setEmojis((prev) => pickThemedEmojisForSuggestion(nextIndex, prev));
       setEmojiKey((k) => k + 1);
       return nextIndex;
+    });
+    requestAnimationFrame(() => {
+      goalInputRef.current?.focus();
+      goalInputRef.current?.setSelectionRange(
+        goalInputRef.current.value.length,
+        goalInputRef.current.value.length,
+      );
     });
   };
 
@@ -858,6 +867,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           <input
             type="text"
             value={goal}
+            ref={goalInputRef}
             onChange={(e) => {
               const nextGoal = e.target.value;
               setGoal(nextGoal);
