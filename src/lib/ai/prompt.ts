@@ -18,12 +18,12 @@ Rules:
 9. The roadmap should be universally applicable, not just for developers
 10. Spine and milestone nodes should have side "center", branch nodes alternate "left" and "right"
 11. Milestone nodes should have parentId set to null and be ordered sequentially with spine nodes
-12. Every node MUST include a concise "action" — a short, clickable label pointing the learner to a specific resource. Actions are displayed as links, so keep them short and name-oriented:
+12. Every spine and branch node MUST include a concise "action" — a short, clickable label pointing the learner to a specific resource. Actions are displayed as links, so keep them short and name-oriented:
     - Format as a resource name or search-query noun phrase, not a full sentence or command. Examples: "YouTube: soldering basics", "Ohm's Law (Khan Academy)", "r/electronics beginner FAQ", "freeCodeCamp JavaScript course", "LED blinker mini-project"
     - Avoid vague filler like "local spots" or "some nearby places" — include a concrete resource type
     - Keep under 40 characters when possible — these are link labels, not instructions
     - Reference freely available resources: YouTube, Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers, Wikipedia, subreddits, or specific beginner projects
-    - For milestone nodes, use a short self-assessment or mini-project name (e.g., "Build a basic amplifier circuit")
+    - For milestone nodes, action should be null UNLESS there is a genuinely useful, specific resource to link to (e.g., a project tutorial or assessment guide). Most milestones are self-explanatory checkpoints — don't force an action link that would just repeat the milestone label as a search query.
 13. Ensure at least one early milestone is a real-world "do the thing" attempt with minimal prerequisites (within the first 1-3 spine nodes).
     - This should be an action-focused checkpoint like "Catch a first fish", "Sketch 10 portraits", "Ship a tiny app", "Cook a full meal".
     - Avoid making the first milestone a class, course, or certification unless the goal is explicitly classroom-based.

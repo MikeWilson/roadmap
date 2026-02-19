@@ -8,8 +8,9 @@ export const roadmapNodeSchema = z.object({
     .describe("One-sentence explanation of this topic/skill"),
   action: z
     .string()
+    .nullable()
     .describe(
-      'A specific, concrete resource label or search-query phrase. Keep it short and concrete, referencing a real, freely available resource or a searchable query. Avoid full sentences or vague filler. Examples: \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\', \'Codecademy intro to Python (free)\''
+      'A specific, concrete resource label or search-query phrase. Keep it short and concrete, referencing a real, freely available resource or a searchable query. Avoid full sentences or vague filler. Examples: \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\', \'Codecademy intro to Python (free)\'. For milestone nodes, set to null unless there is a genuinely useful resource to link to.'
     ),
   type: z.enum(["spine", "branch", "milestone"]).describe(
     "spine = main vertical path item, branch = sub-topic off the spine, milestone = checkpoint/goal"
