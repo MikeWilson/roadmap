@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { GoalInput } from "@/components/landing/GoalInput";
 import { Header } from "@/components/shared/Header";
+import { SafetyPrivacyFooter } from "@/components/shared/SafetyPrivacyFooter";
 
 export default function Home() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -25,6 +26,7 @@ export default function Home() {
           <GoalInput onStepChange={setStep} />
         </div>
       </main>
+      <SafetyPrivacyFooter />
     </div>
   );
 }

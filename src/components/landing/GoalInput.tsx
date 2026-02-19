@@ -1016,7 +1016,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   return (
     <div className="w-full max-w-xl">
       <div className="relative mb-10">
-        <p className="pointer-events-none absolute inset-x-0 left-1/2 w-[120%] sm:w-[150%] max-w-[90vw] -translate-x-1/2 bottom-[75%] sm:bottom-[85%] text-center text-[clamp(2.25rem,8vw,5.5rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900/[0.06] dark:text-white/[0.06]">
+        <p className="pointer-events-none absolute inset-x-0 left-1/2 w-[120%] sm:w-[150%] max-w-[90vw] -translate-x-1/2 bottom-[75%] sm:bottom-[85%] text-center text-[clamp(2.25rem,8vw,5.5rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900/[0.1] dark:text-white/[0.1]">
           Life is boring,
           <br />
           you don&apos;t have to be
