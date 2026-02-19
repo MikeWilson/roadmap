@@ -924,7 +924,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
                 </svg>
               </div>
               <p className="text-xs font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                Someday
+                Soon
               </p>
             </div>
             <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
