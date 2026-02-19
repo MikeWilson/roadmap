@@ -8,10 +8,19 @@ import { Header } from "@/components/shared/Header";
 import { useRoadmapGeneration } from "@/lib/hooks/useRoadmapGeneration";
 import { useDecodedRoadmap } from "@/lib/hooks/useDecodedRoadmap";
 import { updateUrlWithRoadmap } from "@/lib/roadmap/url-codec";
+import { saveToHistory } from "@/lib/roadmap/history";
 
 function DecodedRoadmapContent({ encodedData }: { encodedData: string }) {
   const { entries, title, description, roadmapData, checkedSteps, error } =
     useDecodedRoadmap(encodedData);
+  const savedRef = useRef(false);
+
+  useEffect(() => {
+    if (roadmapData && !savedRef.current) {
+      savedRef.current = true;
+      saveToHistory(roadmapData);
+    }
+  }, [roadmapData]);
 
   if (error) {
     return (
@@ -53,6 +62,7 @@ function GeneratedRoadmapContent({
   const { entries, isLoading, error, title, description, roadmapData } =
     useRoadmapGeneration(goal, goalDescription, context, location);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const savedRef = useRef(false);
 
   useEffect(() => {
     if (roadmapData) {
@@ -60,6 +70,13 @@ function GeneratedRoadmapContent({
       debounceRef.current = setTimeout(() => {
         updateUrlWithRoadmap(roadmapData);
       }, isLoading ? 500 : 0);
+    }
+  }, [isLoading, roadmapData]);
+
+  useEffect(() => {
+    if (!isLoading && roadmapData && !savedRef.current) {
+      savedRef.current = true;
+      saveToHistory(roadmapData);
     }
   }, [isLoading, roadmapData]);
 
