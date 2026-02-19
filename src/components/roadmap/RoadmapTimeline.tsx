@@ -383,7 +383,7 @@ function StepRow({
                       href={searchUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card mt-1 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
+                      className="group/card mt-1 flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
                     >
                       <ActionBadge action={branch.action} />
                       <span className="min-w-0 truncate">
