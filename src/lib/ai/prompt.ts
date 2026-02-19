@@ -22,7 +22,8 @@ Rules:
     - Format as a resource name or search-query noun phrase, not a full sentence or command. Examples: "YouTube: soldering basics", "Ohm's Law (Khan Academy)", "r/electronics beginner FAQ", "freeCodeCamp JavaScript course", "LED blinker mini-project"
     - Avoid vague filler like "local spots" or "some nearby places" — include a concrete resource type
     - Keep under 40 characters when possible — these are link labels, not instructions
-    - Reference freely available resources: YouTube, Khan Academy, Codecademy, freeCodeCamp, Coursera free tiers, Wikipedia, subreddits, or specific beginner projects
+    - Strongly prefer free resources: YouTube tutorials, Wikipedia, Khan Academy, freeCodeCamp, Codecademy, Coursera free tiers, MIT OpenCourseWare, subreddits, or specific beginner projects
+    - Avoid recommending paid courses or classes unless there is clear, widespread community consensus that a specific course is THE go-to resource for a topic (e.g., a legendary Udemy course with tens of thousands of reviews). When in doubt, link the free alternative.
     - For milestone nodes, action should be null UNLESS there is a genuinely useful, specific resource to link to (e.g., a project tutorial or assessment guide). Most milestones are self-explanatory checkpoints — don't force an action link that would just repeat the milestone label as a search query.
 13. Ensure at least one early milestone is a real-world "do the thing" attempt with minimal prerequisites (within the first 1-3 spine nodes).
     - This should be an action-focused checkpoint like "Catch a first fish", "Sketch 10 portraits", "Ship a tiny app", "Cook a full meal".
