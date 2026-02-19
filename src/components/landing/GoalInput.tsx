@@ -1020,7 +1020,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           type="button"
         >
           <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🌱</span>
-          <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
+          <span className="mx-0.5 text-zinc-400 dark:text-zinc-600 sm:mx-1">···</span>
           {emojis.map((emoji, i) => (
             <span
               key={`${emojiKey}-${i}`}
@@ -1030,7 +1030,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               {emoji}
             </span>
           ))}
-          <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
+          <span className="mx-0.5 text-zinc-400 dark:text-zinc-600 sm:mx-1">···</span>
           <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
         </button>
       </div>
