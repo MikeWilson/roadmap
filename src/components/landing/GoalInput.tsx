@@ -671,7 +671,14 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
     if (!el) return;
     el.style.height = "0";
-    el.style.height = el.scrollHeight + "px";
+    let height = el.scrollHeight;
+    // When empty, measure placeholder height so the textarea fits it
+    if (!el.value && el.placeholder) {
+      el.value = el.placeholder;
+      height = Math.max(height, el.scrollHeight);
+      el.value = "";
+    }
+    el.style.height = height + "px";
   }, []);
 
   const descriptionCallbackRef = useCallback(
@@ -710,10 +717,10 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     autoResize(descriptionRef.current);
   }, [goalDescription, autoResize]);
 
-  // Auto-resize when currentState changes
+  // Auto-resize when currentState or its placeholder changes
   useEffect(() => {
     autoResize(currentStateRef.current);
-  }, [currentState, autoResize]);
+  }, [currentState, contextPlaceholder, autoResize]);
 
   const handleGoalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
