@@ -60,10 +60,10 @@ Examples:
 - "a piano player" → "Read sheet music, play chords and scales fluently, learn and perform full songs from memory."
 - "Run a marathon" → "Run 26.2 miles continuously. Follow a structured training plan, manage pacing, and fuel properly on race day."
 
-2. "currentStatePlaceholder": A realistic example of what someone might say about where they are today for this goal. First person, casual, 1-2 sentences. Start with "e.g., "
+2. "currentStatePlaceholder": A realistic example of what someone might say about where they are today for this goal. First person, casual, 1-2 sentences. Do NOT start with "e.g." or any prefix — just the statement itself.
 Examples:
-- "a piano player" → "e.g., I played a bit of keyboard as a kid and can read treble clef slowly, but I never learned proper technique..."
-- "Run a marathon" → "e.g., I jog a couple miles a few times a week but I've never run more than a 5K..."`,
+- "a piano player" → "I played a bit of keyboard as a kid and can read treble clef slowly, but I never learned proper technique..."
+- "Run a marathon" → "I jog a couple miles a few times a week but I've never run more than a 5K..."`,
     prompt: goal,
     temperature: 0.3,
     maxOutputTokens: 512,
