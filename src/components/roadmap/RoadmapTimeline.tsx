@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
 
 function searchUrl(action: string) {
@@ -86,6 +87,88 @@ function ActionBadge({ action }: { action: string }) {
   );
 }
 
+function ShareIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V10" />
+      <path d="M10 2h4v4" />
+      <path d="M14 2 7.5 8.5" />
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 8.5 6.5 12 13 4" />
+    </svg>
+  );
+}
+
+function ShareButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    const url = window.location.href;
+
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ url });
+        return;
+      } catch {
+        // User cancelled or share failed, fall through to clipboard
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable
+    }
+  }, []);
+
+  return (
+    <button
+      onClick={handleShare}
+      className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+    >
+      {copied ? (
+        <>
+          <CheckIcon className="h-4 w-4 text-emerald-500" />
+          <span className="text-emerald-600 dark:text-emerald-400">Copied link</span>
+        </>
+      ) : (
+        <>
+          <ShareIcon className="h-4 w-4" />
+          <span>Share</span>
+        </>
+      )}
+    </button>
+  );
+}
+
 interface RoadmapTimelineProps {
   entries: SpineEntry[];
   title: string;
@@ -116,6 +199,9 @@ export function RoadmapTimeline({
             {description}
           </p>
         )}
+        <div className="mt-3">
+          <ShareButton />
+        </div>
       </div>
 
       {/* Timeline */}
