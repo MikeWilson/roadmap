@@ -935,7 +935,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
                     e.preventDefault();
                     setCurrentState(contextPlaceholder);
                   }}
-                  className="absolute bottom-3 right-2.5 cursor-default rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-400 opacity-0 transition-opacity group-hover/keep:opacity-100 group-focus-within/keep:opacity-0 hover:!opacity-100 hover:cursor-pointer hover:bg-zinc-200 hover:text-zinc-600 dark:bg-zinc-800 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+                  className="absolute bottom-3 right-2 cursor-default rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-400 opacity-0 transition-opacity group-hover/keep:opacity-100 group-focus-within/keep:opacity-0 hover:!opacity-100 hover:cursor-pointer hover:bg-zinc-200 hover:text-zinc-600 dark:bg-zinc-800 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
                 >
                   That&apos;s me
                 </button>
