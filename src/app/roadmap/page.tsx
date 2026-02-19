@@ -20,7 +20,7 @@ function RoadmapContent() {
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
       <Header />
-      <div className="flex flex-1 flex-col pt-14">
+      <div className="flex min-w-0 flex-1 flex-col pt-14">
         {error ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4">
             <p className="text-lg font-medium text-red-600 dark:text-red-400">
