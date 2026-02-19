@@ -1,8 +1,12 @@
 import { generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
+import { headers } from "next/headers";
 
 export const maxDuration = 15;
+
+const MAX_GOAL_LENGTH = 200;
 
 const schema = z.object({
   description: z
@@ -14,10 +18,23 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = rateLimit(ip, "/api/expand-goal");
+  if (!rl.ok) {
+    return new Response("Too many requests. Try again later.", {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds) },
+    });
+  }
+
   const { goal, apiKey } = await req.json();
 
   if (!goal || typeof goal !== "string") {
     return new Response("Goal is required", { status: 400 });
+  }
+
+  if (goal.length > MAX_GOAL_LENGTH) {
+    return new Response(`Goal must be under ${MAX_GOAL_LENGTH} characters`, { status: 400 });
   }
 
   const key = apiKey || process.env.OPENAI_API_KEY;
@@ -43,6 +60,7 @@ Examples:
 - "Run a marathon" → "e.g., I jog a couple miles a few times a week but I've never run more than a 5K..."`,
     prompt: goal,
     temperature: 0.3,
+    maxOutputTokens: 512,
   });
 
   return Response.json(object);
