@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useApiKey } from "@/lib/hooks/useApiKey";
 
 const SUGGESTIONS = [
   // --- initial 8 ---
@@ -608,7 +607,6 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const currentStateRef = useRef<HTMLTextAreaElement | null>(null);
   const goalInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const { apiKey } = useApiKey();
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -740,7 +738,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     fetch("/api/expand-goal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ goal, apiKey }),
+      body: JSON.stringify({ goal }),
     })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -755,7 +753,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           requestAnimationFrame(() => setIsRevealed(true));
         });
       });
-  }, [step, goal, apiKey]);
+  }, [step, goal]);
 
   const shuffleEmojis = () => {
     setHasEngaged(true);
@@ -978,26 +976,33 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   return (
     <div className="w-full max-w-xl">
-      <button
-        onClick={shuffleEmojis}
-        className="mb-10 flex w-full cursor-pointer items-center justify-center gap-2 px-3 sm:gap-3 sm:px-0"
-        aria-label="Shuffle emojis"
-        type="button"
-      >
-        <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🌱</span>
-        <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
-        {emojis.map((emoji, i) => (
-          <span
-            key={`${emojiKey}-${i}`}
-            className="animate-emoji-bounce select-none text-[clamp(2.25rem,10vw,3.75rem)]"
-            style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
-          >
-            {emoji}
-          </span>
-        ))}
-        <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
-        <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
-      </button>
+      <div className="relative mb-10">
+        <p className="pointer-events-none absolute inset-x-0 left-1/2 w-[120%] sm:w-[150%] max-w-[90vw] -translate-x-1/2 bottom-[75%] sm:bottom-[85%] text-center text-[clamp(2.25rem,8vw,5.5rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900/[0.06] dark:text-white/[0.06]">
+          Life is boring,
+          <br />
+          you don&apos;t have to be
+        </p>
+        <button
+          onClick={shuffleEmojis}
+          className="mt-10 sm:mt-20 flex w-full cursor-pointer items-center justify-center gap-2 px-3 sm:gap-3 sm:px-0"
+          aria-label="Shuffle emojis"
+          type="button"
+        >
+          <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🌱</span>
+          <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
+          {emojis.map((emoji, i) => (
+            <span
+              key={`${emojiKey}-${i}`}
+              className="animate-emoji-bounce select-none text-[clamp(2.25rem,10vw,3.75rem)]"
+              style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
+            >
+              {emoji}
+            </span>
+          ))}
+          <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
+          <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
+        </button>
+      </div>
       <form onSubmit={handleGoalSubmit} className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <input
