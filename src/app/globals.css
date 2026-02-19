@@ -158,3 +158,38 @@ body {
     transform: translateY(0);
   }
 }
+
+@keyframes graveyard-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) scale(0.5);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes graveyard-sink {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%) scale(0.5);
+  }
+}
+
+.animate-graveyard-rise {
+  transform-origin: bottom center;
+  animation: graveyard-rise 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.animate-graveyard-sink {
+  transform-origin: bottom center;
+  animation: graveyard-sink 0.12s ease-in-out forwards;
+}
