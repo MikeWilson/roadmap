@@ -1,6 +1,7 @@
 import { generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
+import { checkGoalSafety } from "@/lib/ai/safety";
 import { rateLimit } from "@/lib/rate-limit";
 import { headers } from "next/headers";
 
@@ -40,6 +41,11 @@ export async function POST(req: Request) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
     return new Response("OpenAI API key not configured.", { status: 500 });
+  }
+
+  const safety = await checkGoalSafety(goal, key);
+  if (!safety.safe) {
+    return new Response(safety.reason, { status: 400 });
   }
 
   const openai = createOpenAI({ apiKey: key });

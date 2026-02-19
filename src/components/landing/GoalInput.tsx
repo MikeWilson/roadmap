@@ -595,6 +595,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   );
   const [isExpanding, setIsExpanding] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [safetyError, setSafetyError] = useState<string | null>(null);
   const [currentState, setCurrentState] = useState("");
   const [step, setStep] = useState<1 | 2>(1);
   const [location, setLocation] = useState("");
@@ -735,12 +736,24 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     setIsRevealed(false);
     setGoalDescription("");
 
+    setSafetyError(null);
+
     fetch("/api/expand-goal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ goal }),
     })
-      .then((res) => (res.ok ? res.json() : null))
+      .then(async (res) => {
+        if (res.ok) return res.json();
+        if (res.status === 400) {
+          const msg = await res.text();
+          setSafetyError(msg);
+          setStep(1);
+          onStepChange?.(1);
+          expandedGoalRef.current = null;
+        }
+        return null;
+      })
       .then((data) => {
         if (data?.description) setGoalDescription(data.description);
         if (data?.currentStatePlaceholder)
@@ -798,6 +811,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             setStep(1);
             onStepChange?.(1);
             expandedGoalRef.current = null;
+            setSafetyError(null);
           }}
           className="mb-4 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200 sm:mb-6"
         >
@@ -1003,6 +1017,20 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
         </button>
       </div>
+      {safetyError && (
+        <div className="mb-3 flex items-start gap-2 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <p className="flex-1">{safetyError}</p>
+          <button
+            onClick={() => setSafetyError(null)}
+            className="shrink-0 p-0.5 text-red-400 transition-colors hover:text-red-600 dark:text-red-500 dark:hover:text-red-300"
+            aria-label="Dismiss"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
       <form onSubmit={handleGoalSubmit} className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <input
@@ -1012,6 +1040,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             onChange={(e) => {
               const nextGoal = e.target.value;
               setGoal(nextGoal);
+              if (safetyError) setSafetyError(null);
               const trimmed = nextGoal.trim();
               if (!trimmed) {
                 lastTextMatchRef.current = null;
