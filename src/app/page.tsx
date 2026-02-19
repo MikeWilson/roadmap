@@ -26,7 +26,7 @@ export default function Home() {
           <GoalInput onStepChange={setStep} />
         </div>
       </main>
-      <SafetyPrivacyFooter />
+      {step === 1 && <SafetyPrivacyFooter />}
     </div>
   );
 }
