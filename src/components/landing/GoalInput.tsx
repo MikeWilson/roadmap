@@ -10,7 +10,7 @@ const SUGGESTIONS = [
   ["🎸", "Learn to play guitar"],
   ["💼", "Start a small business"],
   ["🏊", "Do a triathlon"],
-  ["🤖", "Learn machine learning"],
+  ["🥌", "Learn curling"],
   ["👨‍🍳", "Become a home chef"],
   // --- batch 2 (8 more → 16) ---
   ["📖", "Write a novel"],
