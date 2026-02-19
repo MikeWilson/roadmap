@@ -247,7 +247,7 @@ const SUGGESTIONS = [
 
 const EMOJIS = [
   // death & rip
-  "🪦", "💀", "☠️", "⚰️", "👻", "🦴", "🕯️", "⚱️", "🥀",
+  "💀", "☠️", "⚰️", "👻", "🦴", "🕯️", "⚱️", "🥀",
   // flowers & nature
   "🌸", "🌺", "🌻", "🌹", "🌷", "💐", "🌼", "🪻", "🌵",
   // animals
@@ -268,8 +268,24 @@ const EMOJIS = [
   // books & learning
   "📚", "🎓", "✏️", "🧩", "♟️", "🎲",
   // misc fun
-  "🎯", "🪁", "🛶", "⛺", "🎠", "🎡", "🌈", "⭐", "🔥",
+  "🎯", "🪁", "🛶", "⛺", "🎠", "🎡", "🌈", "⭐", "🔥", "🛋️",
 ];
+
+const SOMBER_EMOJIS = [
+  "😴",
+  "🥱",
+  "🛋️",
+  "💀",
+  "☠️",
+  "⚰️",
+  "👻",
+  "🦴",
+  "🕯️",
+  "⚱️",
+  "🥀",
+];
+const FUN_EMOJIS = EMOJIS.filter((emoji) => !SOMBER_EMOJIS.includes(emoji));
+const DEFAULT_EMOJIS = ["🥱", "🛋️", "😴"];
 
 function pickRandom(pool: string[], count: number, exclude: string[]): string[] {
   const available = pool.filter((e) => !exclude.includes(e));
@@ -382,10 +398,8 @@ const PILL_THEME: Record<string, string> = {
 
 function getThemedPool(pillEmoji: string): string[] {
   const theme = PILL_THEME[pillEmoji];
-  return theme ? THEME_POOLS[theme] : EMOJIS;
+  return theme ? THEME_POOLS[theme] : FUN_EMOJIS;
 }
-
-const DEFAULT_EMOJIS = EMOJIS.slice(0, 3);
 
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
   const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
@@ -393,6 +407,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const hasMounted = useRef(false);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [goal, setGoal] = useState("");
+  const [hasEngaged, setHasEngaged] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
   const [contextPlaceholder, setContextPlaceholder] = useState(
@@ -467,8 +482,6 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     if (!hasMounted.current) {
       hasMounted.current = true;
       setSuggestionIndex(Math.floor(Math.random() * SUGGESTIONS.length));
-      setEmojis(pickRandom(EMOJIS, 3, []));
-      setEmojiKey((k) => k + 1);
     }
   }, []);
 
@@ -527,7 +540,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   }, [step, goal, apiKey]);
 
   const shuffleEmojis = () => {
-    setEmojis(pickRandom(EMOJIS, 3, emojis));
+    setHasEngaged(true);
+    setEmojis(pickRandom(FUN_EMOJIS, 3, emojis));
     setEmojiKey((k) => k + 1);
     setSuggestionIndex((i) => (i + 1) % SUGGESTIONS.length);
   };
@@ -782,7 +796,15 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           <input
             type="text"
             value={goal}
-            onChange={(e) => setGoal(e.target.value)}
+            onChange={(e) => {
+              const nextGoal = e.target.value;
+              setGoal(nextGoal);
+              if (!hasEngaged && nextGoal.trim()) {
+                setHasEngaged(true);
+                setEmojis(pickRandom(FUN_EMOJIS, 3, emojis));
+                setEmojiKey((k) => k + 1);
+              }
+            }}
             placeholder={SUGGESTIONS[suggestionIndex][1]}
             className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 pr-12 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:pr-4"
           />
@@ -821,12 +843,14 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           <button
             key={text}
             onClick={() => {
+              setHasEngaged(true);
               setGoal(text);
               setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
               setEmojiKey((k) => k + 1);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onMouseEnter={() => {
+              setHasEngaged(true);
               setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
               setEmojiKey((k) => k + 1);
             }}
