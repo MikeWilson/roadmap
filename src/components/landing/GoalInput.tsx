@@ -362,6 +362,55 @@ const PILL_SPECIFIC_POOLS: Record<string, string[]> = {
   "🪗": ["🪗", "🎵", "🎶", "🎤", "🎧", "🎼"],
 };
 
+type ThemeKey = keyof typeof CORE_THEME_POOLS;
+
+const KEYWORD_LEADS: Array<{ keywords: string[]; theme: ThemeKey; emoji: string }> = [
+  { keywords: ["weight lift", "weights", "weight", "lift", "gym", "workout", "strength", "muscle", "buff"], theme: "run", emoji: "🏋️" },
+  { keywords: ["run", "runner", "jog", "marathon", "race", "sprint", "trail run"], theme: "run", emoji: "🏃" },
+  { keywords: ["yoga", "meditat", "mindful", "breathwork"], theme: "zen", emoji: "🧘" },
+  { keywords: ["swim", "scuba", "dive", "freedive"], theme: "water", emoji: "🏊" },
+  { keywords: ["surf", "kitesurf", "paddleboard", "kayak", "sail", "boat", "ocean"], theme: "water", emoji: "🏄" },
+  { keywords: ["guitar", "piano", "drum", "violin", "sing", "band", "songwrit"], theme: "music", emoji: "🎸" },
+  { keywords: ["cook", "chef", "recipe", "meal prep"], theme: "cook", emoji: "🍳" },
+  { keywords: ["bake", "bread", "cake", "pastry", "sourdough"], theme: "bake", emoji: "🍞" },
+  { keywords: ["coffee", "espresso", "barista", "cocktail", "brew", "kombucha"], theme: "drink", emoji: "☕" },
+  { keywords: ["code", "program", "app", "software", "ai", "robot", "3d print", "arduino"], theme: "tech", emoji: "💻" },
+  { keywords: ["garden", "plant", "grow", "herb", "compost", "greenhouse"], theme: "garden", emoji: "🌱" },
+  { keywords: ["woodwork", "carpentr", "weld", "blacksmith", "forge", "build"], theme: "build", emoji: "🔨" },
+  { keywords: ["photograph", "photo", "camera", "film"], theme: "art", emoji: "📷" },
+  { keywords: ["knit", "crochet", "sew", "embroid", "stitch"], theme: "art", emoji: "🧶" },
+  { keywords: ["write", "book", "novel", "blog", "script", "screenplay", "podcast"], theme: "write", emoji: "✍️" },
+  { keywords: ["language", "spanish", "french", "japanese", "korean", "mandarin", "arabic", "portuguese"], theme: "lang", emoji: "🗣️" },
+  { keywords: ["chess", "board game", "video game", "gaming"], theme: "game", emoji: "♟️" },
+  { keywords: ["climb", "boulder", "hike", "backpack", "camp"], theme: "advent", emoji: "🧗" },
+];
+
+const THEME_KEYWORDS: Record<ThemeKey, string[]> = {
+  water: ["water", "swim", "surf", "sail", "boat", "ocean", "lake", "river", "dive", "scuba", "paddle", "kayak", "snorkel", "windsurf"],
+  run: ["run", "runner", "jog", "marathon", "race", "sprint", "workout", "gym", "fitness", "lift", "weight", "strength", "buff", "cardio"],
+  music: ["music", "guitar", "piano", "drum", "violin", "sing", "band", "song", "compose", "dj", "produce"],
+  cook: ["cook", "chef", "recipe", "meal", "dinner", "kitchen", "pasta", "bbq", "grill"],
+  bake: ["bake", "bread", "cake", "pastry", "sourdough", "cookie", "dessert", "pie"],
+  drink: ["coffee", "espresso", "tea", "drink", "brew", "beer", "wine", "cocktail", "kombucha", "barista"],
+  tech: ["code", "program", "software", "app", "website", "web", "robot", "ai", "tech", "data", "cyber", "arduino", "3d print"],
+  garden: ["garden", "plant", "grow", "herb", "compost", "farm", "greenhouse", "seed", "soil"],
+  art: ["art", "paint", "draw", "craft", "sculpt", "pottery", "ceramic", "design", "photo", "photograph", "calligraphy", "ink", "tattoo"],
+  build: ["build", "woodwork", "carpentr", "weld", "forge", "blacksmith", "tool", "diy", "renovat", "furniture"],
+  write: ["write", "book", "novel", "blog", "story", "screenplay", "script", "podcast", "journal"],
+  advent: ["hike", "climb", "camp", "trail", "mountain", "adventure", "explore", "backpack", "trek", "outdoor"],
+  biz: ["business", "startup", "company", "brand", "entrepreneur", "market", "sell", "sales", "shop", "side hustle"],
+  animal: ["dog", "cat", "horse", "bird", "chicken", "pet", "animal", "train", "trainer"],
+  farm: ["farm", "chicken", "goat", "sheep", "cow", "dairy", "honey", "orchard"],
+  combat: ["box", "fight", "martial", "karate", "kickbox", "wrestle", "fenc", "jiu jitsu", "mma"],
+  lang: ["language", "spanish", "french", "german", "japanese", "korean", "mandarin", "arabic", "portuguese", "translate", "lingo"],
+  game: ["game", "gaming", "chess", "board", "darts", "tennis", "ping", "golf", "bowling", "poker"],
+  ride: ["ride", "motorcycle", "bike", "biking", "cycling", "car", "truck", "skate", "skating", "scooter"],
+  science: ["science", "chem", "physic", "biology", "telescope", "space", "astronomy", "lab", "experiment"],
+  perform: ["perform", "acting", "actor", "theater", "dance", "comedy", "improv", "standup", "sing"],
+  zen: ["yoga", "meditat", "mindful", "retreat", "breath", "stretch"],
+  ice: ["ice", "ski", "snow", "snowboard", "skate", "winter"],
+};
+
 // Map each suggestion emoji → theme key
 const PILL_THEME: Record<string, string> = {
   // water
@@ -445,10 +494,97 @@ function getLinkedPool(pillEmoji: string): string[] {
   return PILL_SPECIFIC_POOLS[pillEmoji] ?? getThemedPool(pillEmoji);
 }
 
+function stemToken(token: string): string {
+  let t = token.toLowerCase();
+  if (t.endsWith("'s")) t = t.slice(0, -2);
+  if (t.endsWith("ing") && t.length > 5) return t.slice(0, -3);
+  if (t.endsWith("ers") && t.length > 5) return t.slice(0, -3);
+  if (t.endsWith("er") && t.length > 4) return t.slice(0, -2);
+  if (t.endsWith("ed") && t.length > 4) return t.slice(0, -2);
+  if (t.endsWith("es") && t.length > 4) return t.slice(0, -2);
+  if (t.endsWith("s") && t.length > 3) return t.slice(0, -1);
+  return t;
+}
+
+function normalizeText(
+  text: string,
+): { normalized: string; spaced: string; tokens: string[]; tokenSet: Set<string> } {
+  const normalized = text.toLowerCase();
+  const cleaned = normalized.replace(/[^a-z0-9]+/g, " ").trim();
+  const tokens = cleaned
+    .split(" ")
+    .map((token) => token.trim())
+    .filter(Boolean)
+    .map(stemToken);
+  return { normalized, spaced: cleaned, tokens, tokenSet: new Set(tokens) };
+}
+
+function keywordHit(
+  spaced: string,
+  tokens: string[],
+  tokenSet: Set<string>,
+  keyword: string,
+): number {
+  if (!keyword) return 0;
+  if (keyword.includes(" ")) {
+    return spaced.includes(keyword) ? 2 : 0;
+  }
+  const stemmed = stemToken(keyword);
+  if (tokenSet.has(stemmed)) return 1;
+  if (stemmed.length >= 5 && tokens.some((token) => token.startsWith(stemmed))) {
+    return 1;
+  }
+  return 0;
+}
+
+function getTextMatch(goalText: string): { theme: ThemeKey; leadEmoji?: string } | null {
+  const { normalized, spaced, tokens, tokenSet } = normalizeText(goalText);
+  if (!normalized.trim()) return null;
+
+  for (const lead of KEYWORD_LEADS) {
+    if (lead.keywords.some((keyword) => keywordHit(spaced, tokens, tokenSet, keyword) > 0)) {
+      return { theme: lead.theme, leadEmoji: lead.emoji };
+    }
+  }
+
+  let bestTheme: ThemeKey | null = null;
+  let bestScore = 0;
+  (Object.entries(THEME_KEYWORDS) as [ThemeKey, string[]][]).forEach(
+    ([theme, keywords]) => {
+      let score = 0;
+      for (const keyword of keywords) {
+        score += keywordHit(spaced, tokens, tokenSet, keyword);
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bestTheme = theme;
+      }
+    },
+  );
+
+  return bestTheme ? { theme: bestTheme } : null;
+}
+
+function pickTextMatchedEmojis(
+  match: { theme: ThemeKey; leadEmoji?: string },
+  exclude: string[],
+): string[] {
+  const pool = CORE_THEME_POOLS[match.theme] ?? THEME_POOLS[match.theme];
+  if (!pool) return pickRandom(FUN_EMOJIS, 3, exclude);
+
+  if (match.leadEmoji) {
+    const filteredPool = pool.filter((emoji) => emoji !== match.leadEmoji);
+    return [match.leadEmoji, ...pickRandom(filteredPool, 2, exclude)];
+  }
+
+  return pickRandom(pool, 3, exclude);
+}
+
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
   const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
   const [emojiKey, setEmojiKey] = useState(0);
   const hasMounted = useRef(false);
+  const lastTextMatchRef = useRef<{ theme: ThemeKey; leadEmoji?: string } | null>(null);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [goal, setGoal] = useState("");
   const [hasEngaged, setHasEngaged] = useState(false);
@@ -601,6 +737,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   const shuffleEmojis = () => {
     setHasEngaged(true);
+    lastTextMatchRef.current = null;
     setSuggestionIndex((i) => {
       const nextIndex = (i + 1) % SUGGESTIONS.length;
       setGoal(SUGGESTIONS[nextIndex][1]);
@@ -871,8 +1008,32 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             onChange={(e) => {
               const nextGoal = e.target.value;
               setGoal(nextGoal);
-              if (!hasEngaged && nextGoal.trim()) {
+              const trimmed = nextGoal.trim();
+              if (!trimmed) {
+                lastTextMatchRef.current = null;
+                setEmojis(DEFAULT_EMOJIS);
+                setEmojiKey((k) => k + 1);
+                return;
+              }
+
+              const match = getTextMatch(trimmed);
+              if (match) {
                 setHasEngaged(true);
+                const prevMatch = lastTextMatchRef.current;
+                const isSameMatch =
+                  prevMatch?.theme === match.theme &&
+                  prevMatch?.leadEmoji === match.leadEmoji;
+                if (!isSameMatch) {
+                  lastTextMatchRef.current = match;
+                  setEmojis((prev) => pickTextMatchedEmojis(match, prev));
+                  setEmojiKey((k) => k + 1);
+                }
+                return;
+              }
+
+              if (!hasEngaged) {
+                setHasEngaged(true);
+                lastTextMatchRef.current = null;
                 setEmojis(pickRandom(FUN_EMOJIS, 3, emojis));
                 setEmojiKey((k) => k + 1);
               }
@@ -916,6 +1077,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             key={text}
             onClick={() => {
               setHasEngaged(true);
+              lastTextMatchRef.current = null;
               setGoal(text);
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
@@ -923,6 +1085,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
             }}
             onMouseEnter={() => {
               setHasEngaged(true);
+              lastTextMatchRef.current = null;
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
             }}
