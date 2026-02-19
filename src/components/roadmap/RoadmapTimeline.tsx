@@ -142,15 +142,15 @@ export function RoadmapTimeline({
                 <MilestoneRow
                   label={entry.node.label}
                   description={entry.node.description}
-                  action={entry.node.action}
+                  action={entry.node.action ?? undefined}
                 />
               ) : (
                 <StepRow
                   label={entry.node.label}
                   description={entry.node.description}
-                  action={entry.node.action}
+                  action={entry.node.action ?? undefined}
                   step={currentStep}
-                  branches={entry.branches}
+                  branches={entry.branches.map(b => ({ ...b, action: b.action ?? undefined }))}
                 />
               )}
               </div>
