@@ -18,11 +18,11 @@ function RoadmapContent() {
     useRoadmapGeneration(goal, goalDescription, context, location);
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
       <Header />
-      <div className="pt-14">
+      <div className="flex flex-1 flex-col pt-14">
         {error ? (
-          <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4">
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4">
             <p className="text-lg font-medium text-red-600 dark:text-red-400">
               Something went wrong
             </p>
@@ -31,7 +31,7 @@ function RoadmapContent() {
             </p>
           </div>
         ) : isLoading && entries.length === 0 ? (
-          <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="flex flex-1 items-center justify-center">
             <RoadmapLoading goal={goal} />
           </div>
         ) : (

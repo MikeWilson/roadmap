@@ -192,10 +192,10 @@ export function RoadmapTimeline({
   let stepNumber = 0;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-32 pt-14 sm:px-6">
+    <div className="mx-auto max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
       {/* Header */}
       <div
-        className="mb-10"
+        className="mb-6 sm:mb-10"
         style={{ animation: "step-fade-in 0.5s ease-out both" }}
       >
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
