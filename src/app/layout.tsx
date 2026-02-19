@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "roadmap.rip — life's boring, you don't have to be",
+  title: "roadmap.rip — Life's boring, you don't have to be",
   description: "Life is boring, you don't have to be. Plan anything to death.",
   icons: {
     icon: "/icon.svg",
