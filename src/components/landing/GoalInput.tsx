@@ -793,8 +793,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   if (step === 2) {
     return (
-      <div className="flex w-full max-w-xl flex-1 min-h-0 flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-4">
+      <div className="flex w-full max-w-xl flex-1 min-h-0 flex-col sm:flex-initial">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-4 sm:flex-initial sm:overflow-visible">
         <button
           onClick={() => {
             setStep(1);
