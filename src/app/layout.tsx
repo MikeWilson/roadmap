@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "roadmap.rip - Plan Anything to Death",
+  title: "roadmap.rip",
   description: "Life is boring, you don't have to be. Plan anything to death.",
   icons: {
     icon: "/icon.svg",
