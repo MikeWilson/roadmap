@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div
       className={`flex flex-col bg-zinc-50 dark:bg-zinc-950 ${
-        step === 2 ? "h-[100dvh] overflow-hidden sm:h-auto sm:min-h-screen sm:overflow-visible" : "min-h-screen"
+        step === 2 ? "h-[100dvh] overflow-hidden sm:h-auto sm:min-h-screen sm:overflow-visible" : "min-h-[100dvh] sm:min-h-screen"
       }`}
     >
       <Header />
