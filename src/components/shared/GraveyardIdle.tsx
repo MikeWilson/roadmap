@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const IDLE_TIMEOUT = 5_000;
+const IDLE_TIMEOUT = 20_000;
 const MAX_EMOJIS = 108;
 const EXIT_DURATION = 120;
 const EXIT_RIPPLE_MAX = 300;
@@ -20,6 +20,7 @@ interface Sprite {
 type Phase = "active" | "idle" | "exiting";
 
 export function GraveyardIdle() {
+  const [isMobile, setIsMobile] = useState(false);
   const [phase, setPhase] = useState<Phase>("active");
   const [sprites, setSprites] = useState<Sprite[]>([]);
   const [exitCursor, setExitCursor] = useState({ x: 0, y: 0 });
@@ -30,6 +31,17 @@ export function GraveyardIdle() {
   const idRef = useRef(0);
   const spawnCountRef = useRef(0);
   const cursorRef = useRef({ x: 0, y: 0 });
+
+  // Disable on mobile
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    function onChange(e: MediaQueryListEvent) {
+      setIsMobile(e.matches);
+    }
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // Track cursor position
   useEffect(() => {
@@ -146,6 +158,7 @@ export function GraveyardIdle() {
     };
   }, [phase]);
 
+  if (isMobile) return null;
   if (phase === "active" && sprites.length === 0) return null;
 
   return (
