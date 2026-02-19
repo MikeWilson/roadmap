@@ -21,13 +21,13 @@ export function SafetyPrivacyFooter() {
           href="https://x.com/mk_wlsn"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
+          className="text-[11px] sm:text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
         >
           @mk_wlsn
         </a>
         <button
           onClick={() => setOpen(true)}
-          className="text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
+          className="text-[11px] sm:text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
         >
           Safety & privacy
         </button>
