@@ -16,18 +16,18 @@ export function SafetyPrivacyFooter() {
 
   return (
     <>
-      <footer className="flex items-center justify-between px-4 py-4">
+      <footer className="flex items-center justify-between px-4 py-2">
         <a
           href="https://x.com/mk_wlsn"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+          className="text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
         >
           @mk_wlsn
         </a>
         <button
           onClick={() => setOpen(true)}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+          className="text-[13px] text-zinc-400 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
         >
           Safety & privacy
         </button>
