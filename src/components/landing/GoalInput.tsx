@@ -10,7 +10,7 @@ const SUGGESTIONS = [
   ["🏃", "Run a marathon"],
   ["🎸", "Learn to play guitar"],
   ["💼", "Start a small business"],
-  ["🏊", "Do a triathlon"],
+  ["🐱", "Raise a kitten"],
   ["🥌", "Learn curling"],
   ["👨‍🍳", "Become a home chef"],
   // --- batch 2 (8 more → 16) ---
@@ -399,7 +399,7 @@ const THEME_KEYWORDS: Record<ThemeKey, string[]> = {
   write: ["write", "book", "novel", "blog", "story", "screenplay", "script", "podcast", "journal"],
   advent: ["hike", "climb", "camp", "trail", "mountain", "adventure", "explore", "backpack", "trek", "outdoor"],
   biz: ["business", "startup", "company", "brand", "entrepreneur", "market", "sell", "sales", "shop", "side hustle"],
-  animal: ["dog", "cat", "horse", "bird", "chicken", "pet", "animal", "train", "trainer"],
+  animal: ["dog", "cat", "kitten", "horse", "bird", "chicken", "pet", "animal", "train", "trainer"],
   farm: ["farm", "chicken", "goat", "sheep", "cow", "dairy", "honey", "orchard"],
   combat: ["box", "fight", "martial", "karate", "kickbox", "wrestle", "fenc", "jiu jitsu", "mma"],
   lang: ["language", "spanish", "french", "german", "japanese", "korean", "mandarin", "arabic", "portuguese", "translate", "lingo"],
