@@ -786,7 +786,8 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   if (step === 2) {
     return (
-      <div className="mt-0 w-full max-w-xl">
+      <div className="flex w-full max-w-xl flex-1 min-h-0 flex-col">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-4">
         <button
           onClick={() => {
             setStep(1);
@@ -953,11 +954,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           </div>
         </div>
 
-        <div className="mt-6">
-          {/* Spacer for fixed button on mobile */}
-          <div className="h-16 sm:hidden" />
         </div>
-        <div className="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-t from-white via-white to-transparent px-4 pb-5 pt-6 sm:relative sm:inset-auto sm:z-auto sm:bg-none sm:p-0 dark:from-zinc-950 dark:via-zinc-950">
+
+        <div className="shrink-0 pb-5 pt-4 sm:pb-0 sm:pt-6">
           <button
             onClick={handleGenerate}
             disabled={!goal.trim() || isExpanding}
