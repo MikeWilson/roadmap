@@ -770,14 +770,14 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   if (step === 2) {
     return (
-      <div className="mt-4 w-full max-w-xl sm:mt-10">
+      <div className="mt-0 w-full max-w-xl">
         <button
           onClick={() => {
             setStep(1);
             onStepChange?.(1);
             expandedGoalRef.current = null;
           }}
-          className="mb-8 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200"
+          className="mb-4 flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-200 sm:mb-6"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

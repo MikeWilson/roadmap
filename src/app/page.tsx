@@ -13,7 +13,7 @@ export default function Home() {
       <main
         className={`flex flex-1 flex-col items-center px-4 pb-16 ${
           step === 2
-            ? "justify-start pt-20"
+            ? "justify-start pt-[72px] sm:pt-20"
             : "justify-center pt-20 sm:pt-[18vh]"
         }`}
       >
