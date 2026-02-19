@@ -1019,31 +1019,31 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   return (
     <div className="w-full max-w-xl">
-      <div className="relative mb-10">
-        <p className="pointer-events-none absolute inset-x-0 left-1/2 w-[120%] sm:w-[150%] max-w-[90vw] -translate-x-1/2 bottom-[90%] sm:bottom-[85%] text-center text-[clamp(2.25rem,8vw,5.5rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900/[0.15] sm:text-zinc-900/[0.1] dark:text-white/[0.15] dark:sm:text-white/[0.1]">
+      <div className="relative mb-6 sm:mb-10">
+        <p className="pointer-events-none absolute inset-x-0 left-1/2 w-[120%] sm:w-[150%] max-w-[90vw] -translate-x-1/2 bottom-[95%] sm:bottom-[85%] text-center text-[clamp(2.5rem,8vw,5.5rem)] font-extrabold leading-[1.1] tracking-tight text-zinc-900/[0.2] sm:text-zinc-900/[0.1] dark:text-white/[0.2] dark:sm:text-white/[0.1]">
           Life is boring,
           <br />
           you don&apos;t have to be
         </p>
         <button
           onClick={shuffleEmojis}
-          className="mt-10 sm:mt-20 flex w-full cursor-pointer items-center justify-center gap-2 px-3 sm:gap-3 sm:px-0"
+          className="mt-18 sm:mt-20 flex w-full cursor-pointer items-center justify-center gap-2 px-3 sm:gap-3 sm:px-0"
           aria-label="Shuffle emojis"
           type="button"
         >
-          <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🌱</span>
+          <span className="select-none text-[clamp(2.25rem,7vw,2.25rem)] opacity-60">🌱</span>
           <span className="mx-0.5 text-zinc-400 dark:text-zinc-600 sm:mx-1">···</span>
           {emojis.map((emoji, i) => (
             <span
               key={`${emojiKey}-${i}`}
-              className="animate-emoji-bounce select-none text-[clamp(2.25rem,10vw,3.75rem)]"
+              className="animate-emoji-bounce select-none text-[clamp(3rem,10vw,3.75rem)]"
               style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
             >
               {emoji}
             </span>
           ))}
           <span className="mx-0.5 text-zinc-400 dark:text-zinc-600 sm:mx-1">···</span>
-          <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
+          <span className="select-none text-[clamp(2.25rem,7vw,2.25rem)] opacity-60">🪦</span>
         </button>
       </div>
       {safetyError && (
