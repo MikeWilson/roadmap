@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "roadmap.rip - Plan Anything to Death",
   description:
     "Enter any goal and we'll plan it to death. A beautiful roadmap for your inevitable journey.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
