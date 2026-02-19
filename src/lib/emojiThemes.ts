@@ -70,6 +70,10 @@ const FUN_EMOJIS = [
   "🎯", "🪁", "🛶", "⛺", "🎠", "🎡", "🌈", "⭐", "🔥",
 ];
 
+export function getEmojisForTheme(theme: string): string[] | null {
+  return CORE_THEME_POOLS[theme] ?? null;
+}
+
 export function getEmojisForGoal(goal: string): string[] {
   const lower = goal.toLowerCase();
   const words = lower
