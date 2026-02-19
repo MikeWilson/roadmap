@@ -130,6 +130,23 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
+function UncheckedBoxIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="text-white">
+      <rect x="3" y="3" width="12" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function CheckedBoxIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="text-white">
+      <rect x="3" y="3" width="12" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.5" fill="currentColor" fillOpacity="0.15" />
+      <path d="M6 9.5l2 2 4-4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function ShareButton() {
   const [copied, setCopied] = useState(false);
 
@@ -190,6 +207,15 @@ export function RoadmapTimeline({
   prompt = "",
 }: RoadmapTimelineProps) {
   let stepNumber = 0;
+  const [checkedSteps, setCheckedSteps] = useState<Set<string>>(new Set());
+  const toggleStep = useCallback((id: string) => {
+    setCheckedSteps(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
@@ -244,6 +270,8 @@ export function RoadmapTimeline({
                   action={entry.node.action ?? undefined}
                   step={currentStep}
                   branches={entry.branches.map(b => ({ ...b, action: b.action ?? undefined }))}
+                  checked={checkedSteps.has(entry.node.id)}
+                  onToggle={() => toggleStep(entry.node.id)}
                 />
               )}
               </div>
@@ -276,26 +304,41 @@ function StepRow({
   action,
   step,
   branches,
+  checked,
+  onToggle,
 }: {
   label: string;
   description: string;
   action?: string;
   step: number;
   branches: { id: string; label: string; description: string; action?: string }[];
+  checked: boolean;
+  onToggle: () => void;
 }) {
   return (
     <div>
       {/* Step header */}
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md dark:bg-zinc-800 dark:text-zinc-100">
-          {step}
-        </div>
-        <div className="min-w-0 flex-1 pt-1.5">
+        <button
+          role="checkbox"
+          aria-checked={checked}
+          aria-label={`Mark step ${step} as complete`}
+          onClick={onToggle}
+          className="group/num relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md transition-colors hover:bg-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        >
+          <span className={`transition-opacity duration-150 ${checked ? "opacity-0" : "group-hover/num:opacity-0"}`}>
+            {step}
+          </span>
+          <span className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ${checked ? "opacity-100" : "opacity-0 group-hover/num:opacity-100"}`}>
+            {checked ? <CheckedBoxIcon /> : <UncheckedBoxIcon />}
+          </span>
+        </button>
+        <div className={`min-w-0 flex-1 pt-1.5 transition-opacity duration-300 ${checked ? "opacity-50" : ""}`}>
           <>
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <h3 className={`text-lg font-semibold text-zinc-900 dark:text-zinc-100 ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600" : ""}`}>
               {label}
             </h3>
-            <p className="mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
+            <p className={`mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600" : ""}`}>
               {description}
             </p>
             {action && (
@@ -316,7 +359,7 @@ function StepRow({
 
       {/* Sub-steps (branches) */}
       {branches.length > 0 && (
-        <div className="ml-[19px] border-l border-zinc-200 pl-6 pt-3 pb-4 sm:pl-8 dark:border-zinc-700">
+        <div className={`ml-[19px] border-l border-zinc-200 pl-6 pt-3 pb-4 sm:pl-8 dark:border-zinc-700 transition-opacity duration-300 ${checked ? "opacity-50" : ""}`}>
           <div className="flex flex-col gap-2.5">
             {branches.map((branch, j) => (
               <div
@@ -329,10 +372,10 @@ function StepRow({
                   {SUBSTEP_LETTERS[j]}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span className="text-base font-medium text-zinc-700 dark:text-zinc-300">
+                  <span className={`text-base font-medium text-zinc-700 dark:text-zinc-300 ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600" : ""}`}>
                     {branch.label}
                   </span>
-                  <span className="ml-1.5 text-base text-zinc-500 dark:text-zinc-400">
+                  <span className={`ml-1.5 text-base text-zinc-500 dark:text-zinc-400 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600" : ""}`}>
                     {branch.description}
                   </span>
                   {branch.action && (
