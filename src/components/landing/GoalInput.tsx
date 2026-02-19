@@ -849,7 +849,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               </div>
               <label
                 htmlFor="current-state"
-                className="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500"
+                className="text-xs font-medium uppercase tracking-wider text-zinc-700 dark:text-white"
               >
                 Today
               </label>
