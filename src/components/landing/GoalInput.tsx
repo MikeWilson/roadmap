@@ -900,7 +900,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           Next
         </button>
       </form>
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
+      <div className="mt-6 grid grid-cols-2 justify-items-center gap-2 sm:flex sm:flex-wrap sm:justify-center">
         {SUGGESTIONS.slice(0, visibleCount).map(([emoji, text], index) => (
           <button
             key={text}
@@ -916,7 +916,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
             }}
-            className="group animate-pill-fade-in rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+            className="group animate-pill-fade-in rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-[13px] text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 sm:px-3 sm:py-1.5 sm:text-sm"
           >
             <span className="mr-1.5 grayscale transition-[filter] duration-200 group-hover:grayscale-0">{emoji}</span>
             {text}
