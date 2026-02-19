@@ -1088,6 +1088,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onMouseEnter={() => {
+              if (goal.trim()) return;
               setHasEngaged(true);
               lastTextMatchRef.current = null;
               setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
