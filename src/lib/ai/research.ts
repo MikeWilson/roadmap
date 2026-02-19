@@ -58,7 +58,7 @@ export async function runResearch({
   const inputLines = [
     "You are doing a quick web-research gut check for a learning roadmap.",
     `Goal: ${goal}`,
-    `Location: ${location || "not specified"}`,
+    ...(location ? [`Location: ${location}`] : []),
     "",
     "Return:",
     "- 3-6 short bullets summarizing the typical learning phases or",
