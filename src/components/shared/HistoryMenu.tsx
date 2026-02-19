@@ -173,7 +173,7 @@ export function HistoryMenu() {
                       refresh();
                     }}
                     aria-label={`Remove ${entry.title} from history`}
-                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded text-zinc-300 opacity-0 transition-all hover:bg-zinc-200 hover:text-zinc-500 group-hover:opacity-100 dark:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-400"
+                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded text-zinc-300 transition-all hover:bg-zinc-200 hover:text-zinc-500 sm:opacity-0 sm:group-hover:opacity-100 dark:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-400"
                   >
                     <TrashIcon />
                   </button>
