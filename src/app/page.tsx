@@ -11,13 +11,15 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
       <Header />
       <main
-        className={`flex flex-1 flex-col items-center px-4 pb-16 ${
+        className={`flex flex-1 flex-col items-center px-4 pb-24 sm:pb-16 ${
           step === 2
             ? "justify-start pt-[72px] sm:pt-20"
-            : "justify-center pt-20 sm:pt-[18vh]"
+            : "pt-20 sm:pt-[18vh]"
         }`}
       >
-        <GoalInput onStepChange={setStep} />
+        <div className={step === 1 ? "my-auto" : ""}>
+          <GoalInput onStepChange={setStep} />
+        </div>
       </main>
     </div>
   );
