@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 
 const SUGGESTIONS = [
   // --- initial 8 ---
@@ -725,6 +726,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
   const handleGoalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goal.trim()) return;
+    track("start_prompt_builder", { goal: goal.trim() });
     setStep(2);
     onStepChange?.(2);
   };
@@ -802,6 +804,12 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     if (location.trim()) {
       params.set("location", location.trim());
     }
+    track("generate_roadmap", {
+      goal: goal.trim(),
+      goalDescription: goalDescription.trim().slice(0, 500),
+      context: currentState.trim().slice(0, 500),
+      location: location.trim(),
+    });
     router.push(`/roadmap?${params.toString()}`);
   };
 
