@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const roadmapNodeSchema = z.object({
   id: z.string().describe('Unique identifier, e.g. "node-1"'),
-  label: z.string().describe("Short display label, max 40 chars"),
+  label: z.string().describe("Short display label, max 40 chars, sentence case (capitalize only the first word and proper nouns)"),
   description: z
     .string()
     .describe("One-sentence explanation of this topic/skill"),
@@ -30,7 +30,7 @@ export const roadmapNodeSchema = z.object({
 });
 
 export const roadmapSchema = z.object({
-  title: z.string().describe("Title of the roadmap"),
+  title: z.string().describe("Title of the roadmap, in sentence case"),
   description: z.string().describe("Brief description of the roadmap goal"),
   nodes: z
     .array(roadmapNodeSchema)

@@ -11,8 +11,8 @@ Rules:
 2. Branch nodes are specific skills, tools, or knowledge areas within each phase
 3. Alternate branch sides: first spine node's branches go left, second go right, etc.
 4. Milestones mark key achievements or transition points — place them between spine groups
-5. Keep labels concise (under 40 characters)
-6. Descriptions should be one clear sentence explaining what to learn and why
+5. Keep labels concise (under 40 characters). Use sentence case — capitalize only the first word and proper nouns (e.g., "Core guitar skills", not "Core Guitar Skills")
+6. Descriptions should be one clear sentence explaining what to learn and why, in sentence case
 7. Order everything from beginner-friendly to advanced
 8. Be comprehensive but not overwhelming — aim for 30-60 total nodes
 9. The roadmap should be universally applicable, not just for developers
