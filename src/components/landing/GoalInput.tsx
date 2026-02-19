@@ -773,23 +773,23 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     <div className="w-full max-w-xl">
       <button
         onClick={shuffleEmojis}
-        className="mb-10 flex w-full cursor-pointer items-center justify-center gap-3"
+        className="mb-10 flex w-full cursor-pointer items-center justify-center gap-2 px-3 sm:gap-3 sm:px-0"
         aria-label="Shuffle emojis"
         type="button"
       >
-        <span className="select-none text-4xl opacity-60">🌱</span>
-        <span className="mx-1 text-zinc-300 dark:text-zinc-600">···</span>
+        <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🌱</span>
+        <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
         {emojis.map((emoji, i) => (
           <span
             key={`${emojiKey}-${i}`}
-            className="animate-emoji-bounce select-none text-6xl"
+            className="animate-emoji-bounce select-none text-[clamp(2.25rem,10vw,3.75rem)]"
             style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
           >
             {emoji}
           </span>
         ))}
-        <span className="mx-1 text-zinc-300 dark:text-zinc-600">···</span>
-        <span className="select-none text-4xl opacity-60">🪦</span>
+        <span className="mx-0.5 text-zinc-300 dark:text-zinc-600 sm:mx-1">···</span>
+        <span className="select-none text-[clamp(1.75rem,7vw,2.25rem)] opacity-60">🪦</span>
       </button>
       <form onSubmit={handleGoalSubmit} className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
