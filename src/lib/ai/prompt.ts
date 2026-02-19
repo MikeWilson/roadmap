@@ -13,7 +13,9 @@ Rules:
 4. Descriptions should be one clear sentence explaining what to learn and why, in sentence case
 5. Order everything from beginner-friendly to advanced
 6. Be comprehensive but not overwhelming — aim for 30-60 total nodes
-7. Strongly prefer free resources for actions: YouTube tutorials, Wikipedia, Khan Academy, freeCodeCamp, Codecademy, Coursera free tiers, MIT OpenCourseWare, subreddits, or specific beginner projects. Avoid paid courses unless there is clear community consensus that a specific course is THE go-to resource for a topic.
+7. Default to free resources for every action. YouTube tutorials, Wikipedia, Khan Academy, freeCodeCamp, Codecademy free tiers, MIT OpenCourseWare, subreddits, community forums, and hands-on practice should be the norm — not the fallback.
+    - Only include a paid course when it is genuinely THE universally referenced resource for that topic (e.g., a course so dominant that Reddit threads, forums, and guides all point to it by name). This should be rare: most roadmaps should have zero or one paid recommendation total.
+    - For music, instruments, and other hobby skills especially: free YouTube channels, community tabs/forums, and practice-focused actions should dominate. Do not default to "take a class" or "enroll in a course" when free alternatives exist.
 8. Place at least one early milestone after no more than 3 spine nodes — a real-world "do the thing" attempt with minimal prerequisites.
     - This should be an action-focused checkpoint like "Catch a first fish", "Sketch 10 portraits", "Ship a tiny app", "Cook a full meal".
     - Avoid making the first milestone a class, course, or certification unless the goal is explicitly classroom-based.
