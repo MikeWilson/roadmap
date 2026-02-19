@@ -324,6 +324,44 @@ const THEME_POOLS: Record<string, string[]> = {
   ice: ["❄️", "🧊", "⛸️", "⛷️", "🏂", "🌨️", "☃️", "🎿", "🏔️", "🦌", "⛰️"],
 };
 
+const CORE_THEME_POOLS: Record<string, string[]> = {
+  water: ["🎣", "🐟", "🐠", "🌊", "🏄", "🤿", "⛵", "🚣", "🚤"],
+  run: ["🏃", "👟", "🏅", "🏁", "💨", "🎽", "⏱️", "💪"],
+  music: ["🎵", "🎶", "🎸", "🎹", "🎤", "🎧", "🎼", "🥁"],
+  cook: ["🍳", "👨‍🍳", "🔪", "🥘", "🍽️", "🍲", "🥢", "🧑‍🍳"],
+  bake: ["🍞", "🥐", "🧁", "🍰", "🥧", "🎂", "🍪", "🥖"],
+  drink: ["🍺", "🍷", "☕", "🥃", "🍸", "🧋", "🍹", "🍾"],
+  tech: ["💻", "🖥️", "📱", "⌨️", "🤖", "💾", "🔌", "💡"],
+  garden: ["🌱", "🌿", "🌻", "🌸", "🪴", "🐝", "🦋", "🌼"],
+  art: ["🎨", "🖌️", "✏️", "🖍️", "🖼️", "🏺", "🧵", "🧶"],
+  build: ["🔨", "🔧", "🪚", "🏗️", "🧱", "🪵", "🛠️", "⚙️"],
+  write: ["✍️", "📝", "📖", "📚", "🖊️", "🎙️", "🎬", "📻"],
+  advent: ["🏔️", "🏕️", "🧭", "🗺️", "🥾", "🎒", "⛺", "🧗"],
+  biz: ["💼", "📈", "💰", "🏪", "🛍️", "🤝", "🧾", "🛒"],
+  animal: ["🐶", "🐱", "🐴", "🐔", "🦜", "🐦", "🐰", "🐾"],
+  farm: ["🌾", "🚜", "🐓", "🐑", "🐐", "🥛", "🍯", "🐄"],
+  combat: ["🥊", "🤺", "🏹", "🥋", "⚔️", "🛡️", "👊", "🥷"],
+  lang: ["🗣️", "💬", "🌍", "✈️", "🗺️", "📝", "🎓", "📚"],
+  game: ["♟️", "🎲", "🎯", "🏆", "🧩", "🎮", "🎳", "🎾"],
+  ride: ["🚗", "🏍️", "🛹", "🚲", "🏎️", "🛵", "🛞", "🏁"],
+  science: ["🔬", "🔭", "🧪", "🧬", "💡", "🌌", "⭐", "📡"],
+  perform: ["🎤", "🎭", "💃", "🕺", "🤹", "🎪", "🎶", "🎬"],
+  zen: ["🧘", "🙏", "🪷", "📿", "🍃", "🌸"],
+  ice: ["❄️", "🧊", "⛸️", "⛷️", "🏂", "🌨️", "🎿", "☃️"],
+};
+
+const PILL_SPECIFIC_POOLS: Record<string, string[]> = {
+  "🎸": ["🎸", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🎹": ["🎹", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🥁": ["🥁", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🎻": ["🎻", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🎺": ["🎺", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🎷": ["🎷", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🪕": ["🪕", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🪈": ["🪈", "🎵", "🎶", "🎤", "🎧", "🎼"],
+  "🪗": ["🪗", "🎵", "🎶", "🎤", "🎧", "🎼"],
+};
+
 // Map each suggestion emoji → theme key
 const PILL_THEME: Record<string, string> = {
   // water
@@ -398,7 +436,13 @@ const PILL_THEME: Record<string, string> = {
 
 function getThemedPool(pillEmoji: string): string[] {
   const theme = PILL_THEME[pillEmoji];
-  return theme ? THEME_POOLS[theme] : FUN_EMOJIS;
+  return theme
+    ? CORE_THEME_POOLS[theme] ?? THEME_POOLS[theme]
+    : FUN_EMOJIS;
+}
+
+function getLinkedPool(pillEmoji: string): string[] {
+  return PILL_SPECIFIC_POOLS[pillEmoji] ?? getThemedPool(pillEmoji);
 }
 
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
@@ -499,6 +543,21 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     [autoResize],
   );
 
+  const pickThemedEmojisForSuggestion = useCallback(
+    (index: number, exclude: string[]) => {
+      const [pillEmoji] = SUGGESTIONS[index];
+      const pool = getLinkedPool(pillEmoji);
+      const uniquePool = pool.includes(pillEmoji) ? pool : [pillEmoji, ...pool];
+      const rest = pickRandom(
+        uniquePool.filter((emoji) => emoji !== pillEmoji),
+        2,
+        exclude,
+      );
+      return [pillEmoji, ...rest];
+    },
+    [],
+  );
+
   // Auto-resize when goalDescription changes
   useEffect(() => {
     autoResize(descriptionRef.current);
@@ -541,9 +600,12 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
 
   const shuffleEmojis = () => {
     setHasEngaged(true);
-    setEmojis(pickRandom(FUN_EMOJIS, 3, emojis));
-    setEmojiKey((k) => k + 1);
-    setSuggestionIndex((i) => (i + 1) % SUGGESTIONS.length);
+    setSuggestionIndex((i) => {
+      const nextIndex = (i + 1) % SUGGESTIONS.length;
+      setEmojis((prev) => pickThemedEmojisForSuggestion(nextIndex, prev));
+      setEmojiKey((k) => k + 1);
+      return nextIndex;
+    });
   };
 
   const handleGenerate = () => {
@@ -839,19 +901,19 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         </button>
       </form>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
-        {SUGGESTIONS.slice(0, visibleCount).map(([emoji, text]) => (
+        {SUGGESTIONS.slice(0, visibleCount).map(([emoji, text], index) => (
           <button
             key={text}
             onClick={() => {
               setHasEngaged(true);
               setGoal(text);
-              setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
+              setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onMouseEnter={() => {
               setHasEngaged(true);
-              setEmojis(pickRandom(getThemedPool(emoji), 3, emojis));
+              setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
             }}
             className="group animate-pill-fade-in rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
