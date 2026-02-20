@@ -217,6 +217,11 @@ export function RoadmapTimeline({
     () => initialCheckedSteps ?? new Set(),
   );
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Only animate entries when the component mounted during streaming.
+  // When mounting with all data ready (e.g. decoded URL or component swap
+  // after generation), skip animations to prevent a visual flash.
+  const shouldAnimate = useRef(isLoading);
   const toggleStep = useCallback((id: string) => {
     setCheckedSteps(prev => {
       const next = new Set(prev);
@@ -239,7 +244,7 @@ export function RoadmapTimeline({
       {/* Header */}
       <div
         className="mb-6 sm:mb-10"
-        style={{ animation: "step-fade-in 0.5s ease-out both" }}
+        style={shouldAnimate.current ? { animation: "step-fade-in 0.5s ease-out both" } : undefined}
       >
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
           {title}
@@ -266,7 +271,7 @@ export function RoadmapTimeline({
             <div
               key={entry.node.id}
               className="relative pb-2"
-              style={{ animation: "step-fade-in 0.5s ease-out both" }}
+              style={shouldAnimate.current ? { animation: "step-fade-in 0.5s ease-out both" } : undefined}
             >
               {/* Vertical line - runs behind everything */}
               {!isLast && (
@@ -289,6 +294,7 @@ export function RoadmapTimeline({
                   branches={entry.branches.map(b => ({ ...b, action: b.action ?? undefined }))}
                   checked={checkedSteps.has(entry.node.id)}
                   onToggle={() => toggleStep(entry.node.id)}
+                  animate={shouldAnimate.current}
                 />
               )}
               </div>
@@ -323,6 +329,7 @@ function StepRow({
   branches,
   checked,
   onToggle,
+  animate,
 }: {
   label: string;
   description: string;
@@ -331,6 +338,7 @@ function StepRow({
   branches: { id: string; label: string; description: string; action?: string }[];
   checked: boolean;
   onToggle: () => void;
+  animate: boolean;
 }) {
   return (
     <div>
@@ -382,7 +390,7 @@ function StepRow({
               <div
                 key={branch.id}
                 className="flex items-start gap-3"
-                style={{ animation: `step-fade-in 0.5s ease-out ${(j + 1) * 0.06}s both` }}
+                style={animate ? { animation: `step-fade-in 0.5s ease-out ${(j + 1) * 0.06}s both` } : undefined}
               >
                 <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500">
                   {step}
