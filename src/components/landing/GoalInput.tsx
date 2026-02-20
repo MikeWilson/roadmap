@@ -12,7 +12,7 @@ const SUGGESTIONS = [
   ["💼", "Start a small business"],
   ["🐱", "Raise a kitten"],
   ["🥌", "Learn curling"],
-  ["👨‍🍳", "Become a home chef"],
+  ["🕯️", "Make a candle"],
   // --- batch 2 (8 more → 16) ---
   ["📖", "Write a novel"],
   ["🤿", "Get scuba certified"],
@@ -21,7 +21,7 @@ const SUGGESTIONS = [
   ["📱", "Build a mobile app"],
   ["🥬", "Grow a vegetable garden"],
   ["🧘", "Become a yoga instructor"],
-  ["✒️", "Learn calligraphy"],
+  ["🍄", "Become a mushroom forager"],
   // --- batch 3 (16 more → 32) ---
   ["🚗", "Restore a vintage car"],
   ["⛵", "Learn to sail"],
@@ -83,7 +83,7 @@ const SUGGESTIONS = [
   ["🍣", "Master sushi making"],
   ["🪂", "Learn to paraglide"],
   ["🏡", "Build a tiny house"],
-  ["🍄", "Become a mushroom forager"],
+  ["✒️", "Learn calligraphy"],
   ["🖼️", "Learn screen printing"],
   ["🕯️", "Start a candle business"],
   ["🍜", "Master Thai cooking"],
