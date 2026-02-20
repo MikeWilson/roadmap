@@ -62,50 +62,47 @@ body {
 }
 
 @keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
+  from {
+    background-position: 150% center;
   }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+  to {
+    background-position: -150% center;
   }
 }
 
 @media (max-width: 639px) {
   .animate-gradient-text {
     background: linear-gradient(
-      90deg,
-      #ffffff 0%,
-      #a8a8a8 25%,
+      110deg,
+      #d4d4d8 0%,
+      #d4d4d8 40%,
       #ffffff 50%,
-      #a8a8a8 75%,
-      #ffffff 100%
+      #d4d4d8 60%,
+      #d4d4d8 100%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradient-shift 3s ease-in-out infinite;
+    animation: gradient-shift 3.5s linear infinite;
   }
 }
 
 @media (max-width: 639px) and (prefers-color-scheme: dark) {
   .animate-gradient-text {
     background: linear-gradient(
-      90deg,
+      110deg,
       #18181b 0%,
-      #52525b 25%,
-      #18181b 50%,
-      #52525b 75%,
+      #18181b 40%,
+      #52525b 50%,
+      #18181b 60%,
       #18181b 100%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradient-shift 3s ease-in-out infinite;
+    animation: gradient-shift 3.5s linear infinite;
   }
 }
 
