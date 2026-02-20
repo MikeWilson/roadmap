@@ -6,7 +6,7 @@ import { runResearch } from "@/lib/ai/research";
 import { checkGoalSafety } from "@/lib/ai/safety";
 import { rateLimit } from "@/lib/rate-limit";
 import { headers } from "next/headers";
-import { track } from "@vercel/analytics/server";
+
 
 export const maxDuration = 60;
 
@@ -74,13 +74,6 @@ export async function POST(req: Request) {
     research?.summary,
     research?.sources,
   );
-
-  // Fire-and-forget: don't block the stream on analytics
-  track("generate_roadmap_prompt", {
-    goal,
-    // Vercel Analytics props are capped at 500 chars each
-    prompt: userPrompt.slice(0, 500),
-  }).catch(() => {});
 
   const result = streamObject({
     model: openai("gpt-4o"),

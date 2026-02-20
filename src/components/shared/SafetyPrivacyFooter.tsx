@@ -83,11 +83,9 @@ export function SafetyPrivacyFooter() {
                   Analytics
                 </h3>
                 <p>
-                  We use Vercel Analytics to improve this product. This includes
-                  the prompts you submit and the thumbs-up / thumbs-down ratings
-                  you give to generated roadmaps. This data helps us understand
-                  what&apos;s working and what isn&apos;t so we can make the
-                  experience better.
+                  We use anonymous analytics to understand how people use
+                  this product and to improve the experience. No personal
+                  information is collected.
                 </p>
               </div>
             </div>

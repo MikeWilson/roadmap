@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
 import type { RoadmapData } from "@/app/api/generate-roadmap/schema";
 import { updateUrlWithRoadmap } from "@/lib/roadmap/url-codec";
-import { FeedbackButtons } from "./FeedbackButtons";
+
 
 function searchUrl(action: string) {
   const lower = action.toLowerCase();
@@ -300,13 +300,6 @@ export function RoadmapTimeline({
         {isLoading && <SkeletonRows />}
       </div>
 
-      {/* Feedback */}
-      {!isLoading && entries.length > 0 && (
-        <FeedbackButtons
-          prompt={prompt}
-          response={`${title}: ${description}. Steps: ${entries.map((e) => e.node.label).join(", ")}`}
-        />
-      )}
     </div>
   );
 }
