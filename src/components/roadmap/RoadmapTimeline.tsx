@@ -6,10 +6,49 @@ import type { RoadmapData } from "@/app/api/generate-roadmap/schema";
 import { updateUrlWithRoadmap } from "@/lib/roadmap/url-codec";
 
 
-function searchUrl(action: string) {
+function isDirectUrl(action: string) {
+  return /^https?:\/\//i.test(action);
+}
+
+function friendlyActionLabel(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const path = decodeURIComponent(parsed.pathname).replace(/\/$/, "");
+
+    if (host.includes("wikipedia.org")) {
+      const slug = path.split("/").pop() ?? "";
+      return `Wikipedia: ${slug.replace(/_/g, " ")}`;
+    }
+    if (host.includes("youtube.com") || host.includes("youtu.be")) {
+      return "YouTube";
+    }
+    if (host.includes("reddit.com")) {
+      const match = path.match(/\/r\/([^/]+)/);
+      return match ? `Reddit: r/${match[1]}` : "Reddit";
+    }
+    if (host.includes("github.com")) {
+      const parts = path.split("/").filter(Boolean);
+      return parts.length >= 2 ? `GitHub: ${parts.slice(0, 2).join("/")}` : "GitHub";
+    }
+
+    // Fallback: show domain + first meaningful path segment
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length > 0) {
+      const label = segments[0].replace(/[-_]/g, " ");
+      return `${host} — ${label}`;
+    }
+    return host;
+  } catch {
+    return url;
+  }
+}
+
+function actionUrl(action: string) {
+  if (isDirectUrl(action)) return action;
+
   const lower = action.toLowerCase();
   if (lower.includes("youtube")) {
-    // Strip YouTube references and verb prefixes to get the raw search query
     const query = action
       .replace(/\bon\s+youtube\b/gi, "")
       .replace(/\byoutube\b/gi, "")
@@ -30,6 +69,10 @@ function searchUrl(action: string) {
     .replace(/^["':\s\-–—]+|["':\s\-–—]+$/g, "")
     .trim();
   return `https://www.google.com/search?q=${encodeURIComponent(cleaned || action)}`;
+}
+
+function actionLabel(action: string): string {
+  return isDirectUrl(action) ? friendlyActionLabel(action) : action;
 }
 
 /* ── Destination icons ── */
@@ -85,7 +128,30 @@ function ExternalIcon({ className }: { className?: string }) {
   );
 }
 
+function LinkIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      className="shrink-0 text-current"
+    >
+      <path d="M6 7.5a3 3 0 0 0 4.2.3l1.5-1.5a3 3 0 0 0-4.2-4.3L6.3 3.2" />
+      <path d="M8 6.5a3 3 0 0 0-4.2-.3L2.3 7.7a3 3 0 0 0 4.2 4.3l1.2-1.2" />
+    </svg>
+  );
+}
+
 function ActionBadge({ action }: { action: string }) {
+  if (isDirectUrl(action)) {
+    const lower = action.toLowerCase();
+    if (lower.includes("youtube.com") || lower.includes("youtu.be")) return <span className="flex shrink-0 items-center gap-1"><YouTubeIcon /></span>;
+    return <span className="flex shrink-0 items-center gap-1"><LinkIcon /></span>;
+  }
   const isYouTube = action.toLowerCase().includes("youtube");
   return (
     <span className="flex shrink-0 items-center gap-1">
@@ -361,13 +427,13 @@ function StepRow({
             </p>
             {action && (
               <a
-                href={searchUrl(action)}
+                href={actionUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
               >
                 <ActionBadge action={action} />
-                <span className="min-w-0 truncate">{action}</span>
+                <span className="min-w-0 truncate">{actionLabel(action)}</span>
                 <ExternalIcon className="inline-flex" />
               </a>
             )}
@@ -398,14 +464,14 @@ function StepRow({
                   </span>
                   {branch.action && (
                     <a
-                      href={searchUrl(branch.action)}
+                      href={actionUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group/card mt-1 flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
                     >
                       <ActionBadge action={branch.action} />
                       <span className="min-w-0 truncate">
-                        {branch.action}
+                        {actionLabel(branch.action)}
                       </span>
                       <ExternalIcon className="inline-flex" />
                     </a>
@@ -453,13 +519,13 @@ function MilestoneRow({
         </p>
         {action && (
           <a
-            href={searchUrl(action)}
+            href={actionUrl(action)}
             target="_blank"
             rel="noopener noreferrer"
             className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 sm:w-fit"
           >
             <ActionBadge action={action} />
-            <span className="min-w-0 truncate">{action}</span>
+            <span className="min-w-0 truncate">{actionLabel(action)}</span>
             <ExternalIcon className="inline-flex" />
           </a>
         )}

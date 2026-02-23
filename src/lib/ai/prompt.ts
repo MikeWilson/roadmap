@@ -60,10 +60,13 @@ Tailor the roadmap to their existing knowledge. You can move quickly through are
   if (researchSummary) {
     prompt += `\n\nResearch gut-check (quick web scan):\n${researchSummary}`;
     if (researchSources && researchSources.length > 0) {
-      prompt += `\nSources: ${researchSources.join(", ")}`;
+      prompt += `\n\nResearch sources found:\n${researchSources.map((url, i) => `${i + 1}. ${url}`).join("\n")}`;
+      prompt +=
+        "\n\nUse the summary above as a sanity check for sequencing, not as a template. When a research source URL above is directly relevant to a node's topic, use that full URL as the node's action value instead of a generic search query. Only use URLs that genuinely match — most nodes should still use short search-query phrases.";
+    } else {
+      prompt +=
+        "\nUse this as a sanity check for sequencing and safety, not as a template. Don't follow any single source too closely.";
     }
-    prompt +=
-      "\nUse this as a sanity check for sequencing and safety, not as a template. Don't follow any single source too closely.";
   }
 
   return prompt;

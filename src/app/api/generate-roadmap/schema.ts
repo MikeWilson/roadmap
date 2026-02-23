@@ -10,7 +10,7 @@ export const roadmapNodeSchema = z.object({
     .string()
     .nullable()
     .describe(
-      'A specific, concrete resource label or search-query phrase. Keep it short and concrete, referencing a real, freely available resource or a searchable query. Avoid full sentences or vague filler. Examples: \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\', \'Wikipedia: music theory\'. For milestone nodes, set to null unless there is a genuinely useful resource to link to.'
+      'A specific, concrete resource label, search-query phrase, or direct URL. If a research source URL is directly relevant to this node, use the full URL (e.g. "https://en.wikipedia.org/wiki/Music_theory"). Otherwise use a short search-query phrase like \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\'. Avoid full sentences or vague filler. For milestone nodes, set to null unless there is a genuinely useful resource to link to.'
     ),
   type: z.enum(["spine", "branch", "milestone"]).describe(
     "spine = main vertical path item, branch = sub-topic off the spine, milestone = checkpoint/goal"
