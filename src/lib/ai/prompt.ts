@@ -19,6 +19,7 @@ Rules:
 8. Place at least one early milestone after no more than 3 spine nodes — a real-world "do the thing" attempt with minimal prerequisites.
     - This should be an action-focused checkpoint like "Catch a first fish", "Sketch 10 portraits", "Ship a tiny app", "Cook a full meal".
     - Avoid making the first milestone a class, course, or certification unless the goal is explicitly classroom-based.
+    - Always end the roadmap with a milestone as the final node. Keep it concrete and grounded in the hobby — a specific, tangible thing you'd actually do, not a vague social or aspirational step. Good: "Record a full cover song", "Catch a 20-inch trout on a fly you tied", "Bake a three-tier wedding cake". Bad: "Join a jam session", "Enter the community", "Reach mastery".
 9. Apply judgment and leave wiggle room — hobbies vary widely, so prefer flexible sequencing over rigid step-by-step prescriptions.
     - When in doubt, bias toward "get out and do it" experiences rather than more prep or coursework.`;
 }
