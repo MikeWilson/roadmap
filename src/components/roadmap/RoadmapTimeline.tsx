@@ -434,7 +434,7 @@ function StepRow({
               >
                 <ActionBadge action={action} />
                 <span className="min-w-0 truncate">{actionLabel(action)}</span>
-                <ExternalIcon className="inline-flex" />
+                <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
               </a>
             )}
           </>
@@ -473,7 +473,7 @@ function StepRow({
                       <span className="min-w-0 truncate">
                         {actionLabel(branch.action)}
                       </span>
-                      <ExternalIcon className="inline-flex" />
+                      <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
                     </a>
                   )}
                 </div>
@@ -526,7 +526,7 @@ function MilestoneRow({
           >
             <ActionBadge action={action} />
             <span className="min-w-0 truncate">{actionLabel(action)}</span>
-            <ExternalIcon className="inline-flex" />
+            <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
           </a>
         )}
       </div>
