@@ -24,6 +24,44 @@ Rules:
     - When in doubt, bias toward "get out and do it" experiences rather than more prep or coursework.`;
 }
 
+export function buildExtendSystemPrompt(): string {
+  return `You are an expert learning path architect. The user already has a roadmap and wants to extend it — add MORE to what they have based on a follow-up request.
+
+You are given the existing roadmap and the user's request. Generate only the NEW nodes that should be appended to the end of the roadmap.
+
+Rules:
+1. Return ONLY new nodes. Never repeat or restate topics that already exist in the roadmap.
+2. Each new node needs a unique id that does not collide with existing ids — prefix new ids with "x" (e.g. "x1", "x2", "x3").
+3. order numbers must be strictly greater than every existing order, continuing the sequence so the new nodes sort to the end.
+4. Structure new content the same way as the original: spine nodes for major new phases, branch sub-topics hanging off them, and a milestone for a meaningful checkpoint. Any branch node's parentId MUST reference a NEW spine node you create in this same response (not an existing one), and its side alternates left/right. Spine and milestone nodes use side "center".
+5. Descriptions are one clear sentence in sentence case. Labels are max 40 chars in sentence case.
+6. Honor the user's request directly — if they ask to go deeper on something, add depth; if they ask for a new area, add that area; if they ask for the next steps after the roadmap, continue past the current ending.
+7. Keep it focused — add roughly 3-10 new nodes, not a whole second roadmap, unless the request clearly calls for more.
+8. Prioritize open public knowledge for action links. Wikipedia, YouTube, official documentation, public wikis, subreddits, community forums, Stack Exchange, and hands-on practice are the default. Use a short search-query phrase (e.g. 'YouTube: advanced soldering', 'MDN flexbox guide') or a direct URL when one is genuinely the canonical resource. Avoid courses unless one is THE universally referenced resource. For milestone nodes set action to null unless a genuinely useful resource exists.
+9. If the additions form a natural new checkpoint, end them with a concrete, grounded milestone — a specific tangible thing you'd actually do, not a vague aspirational step.`;
+}
+
+export function buildExtendUserPrompt(
+  title: string,
+  description: string,
+  existingLabels: string[],
+  maxOrder: number,
+  request: string,
+): string {
+  return `Existing roadmap: "${title}"
+${description}
+
+Topics already covered (do not repeat these):
+${existingLabels.map((l) => `- ${l}`).join("\n")}
+
+The highest order value currently in use is ${maxOrder}. All new nodes must use order values greater than ${maxOrder}.
+
+The user's request for more:
+"${request}"
+
+Generate only the new nodes to append to this roadmap that satisfy the request.`;
+}
+
 export function buildUserPrompt(
   goal: string,
   goalDescription?: string,
