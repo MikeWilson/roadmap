@@ -25,7 +25,18 @@ export async function POST(req: Request) {
     });
   }
 
-  const { goal, goalDescription, context, location } = await req.json();
+  let body: {
+    goal?: string;
+    goalDescription?: string;
+    context?: string;
+    location?: string;
+  };
+  try {
+    body = await req.json();
+  } catch {
+    return new Response("Invalid request body", { status: 400 });
+  }
+  const { goal, goalDescription, context, location } = body;
 
   if (!goal || typeof goal !== "string") {
     return new Response("Goal is required", { status: 400 });
@@ -76,12 +87,12 @@ export async function POST(req: Request) {
   );
 
   const result = streamObject({
-    model: openai("gpt-4o"),
+    model: openai("gpt-5.4"),
     schema: roadmapSchema,
     system: buildSystemPrompt(),
     prompt: userPrompt,
-    temperature: 0.3,
-    maxOutputTokens: 8192,
+    maxOutputTokens: 16000,
+    providerOptions: { openai: { reasoningEffort: "low" } },
   });
 
   return result.toTextStreamResponse();

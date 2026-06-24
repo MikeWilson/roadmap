@@ -71,6 +71,7 @@ function GeneratedRoadmapContent({
         updateUrlWithRoadmap(roadmapData);
       }, isLoading ? 500 : 0);
     }
+    return () => clearTimeout(debounceRef.current);
   }, [isLoading, roadmapData]);
 
   useEffect(() => {
