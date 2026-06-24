@@ -28,7 +28,13 @@ export async function POST(req: Request) {
     });
   }
 
-  const { goal } = await req.json();
+  let body: { goal?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return new Response("Invalid request body", { status: 400 });
+  }
+  const { goal } = body;
 
   if (!goal || typeof goal !== "string") {
     return new Response("Goal is required", { status: 400 });
@@ -51,7 +57,7 @@ export async function POST(req: Request) {
   const openai = createOpenAI({ apiKey: key });
 
   const { object } = await generateObject({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-5.4-mini"),
     schema,
     system: `Given a goal, return two things:
 
@@ -65,8 +71,10 @@ Examples:
 - "a piano player" → "I played a bit of keyboard as a kid and can read treble clef slowly, but I never learned proper technique..."
 - "Run a marathon" → "I jog a couple miles a few times a week but I've never run more than a 5K..."`,
     prompt: goal,
-    temperature: 0.3,
-    maxOutputTokens: 512,
+    maxOutputTokens: 2000,
+    // "none" disables reasoning (gpt-5.4-mini rejects "minimal") — this is a
+    // simple structured rewrite, closest to the old non-reasoning behavior.
+    providerOptions: { openai: { reasoningEffort: "none" } },
   });
 
   return Response.json(object);

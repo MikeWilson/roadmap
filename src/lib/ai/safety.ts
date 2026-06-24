@@ -125,13 +125,19 @@ async function llmSafetyCheck(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         messages: [
           { role: "system", content: CLASSIFIER_PROMPT },
           { role: "user", content: input },
         ],
-        temperature: 0,
-        max_tokens: 4,
+        // gpt-5.x are reasoning models: temperature is not configurable, and
+        // reasoning tokens count against the output budget — so the previous
+        // max_tokens: 4 would be consumed before any answer, returning empty
+        // content and silently failing the goal open. "none" disables reasoning
+        // entirely (gpt-5.4-mini rejects "minimal"), keeping this a fast,
+        // single-word classification; the budget just needs room for one word.
+        reasoning_effort: "none",
+        max_completion_tokens: 16,
       }),
       signal: controller.signal,
     });

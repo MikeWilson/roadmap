@@ -3,7 +3,7 @@ type ResearchResult = {
   sources: string[];
 };
 
-const DEFAULT_TIMEOUT_MS = 5000;
+const DEFAULT_TIMEOUT_MS = 9000;
 const OUTPUT_CHAR_LIMIT = 1200;
 
 function extractOutputText(data: unknown): string {
@@ -77,11 +77,14 @@ export async function runResearch({
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-5.4-mini",
         tools: [{ type: "web_search" }],
         tool_choice: "auto",
-        temperature: 0.2,
-        max_output_tokens: 350,
+        // Reasoning model: temperature is not configurable, and reasoning
+        // tokens share the output budget — raise the cap so reasoning + the
+        // web-search summary both fit.
+        reasoning: { effort: "low" },
+        max_output_tokens: 2000,
         input: inputLines.join("\n"),
       }),
       signal: controller.signal,

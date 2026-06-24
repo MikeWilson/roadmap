@@ -289,7 +289,10 @@ const DEFAULT_EMOJIS = ["🥱", "🛋️", "😴"];
 function pickRandom(pool: string[], count: number, exclude: string[]): string[] {
   const available = pool.filter((e) => !exclude.includes(e));
   const result: string[] = [];
-  for (let i = 0; i < count; i++) {
+  // Clamp to what's actually available — splicing past the end would push
+  // `undefined` into the result and render blank emoji tiles.
+  const n = Math.min(count, available.length);
+  for (let i = 0; i < n; i++) {
     const idx = Math.floor(Math.random() * available.length);
     result.push(available.splice(idx, 1)[0]);
   }
@@ -752,8 +755,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           setStep(1);
           onStepChange?.(1);
           expandedGoalRef.current = null;
+          return null;
         }
-        return null;
+        throw new Error(`expand-goal failed: ${res.status}`);
       })
       .then((data) => {
         if (data?.description) setGoalDescription(data.description);
@@ -761,6 +765,14 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
           setContextPlaceholder(
             data.currentStatePlaceholder.replace(/^e\.?\s*g\.?,?\s*/i, ""),
           );
+      })
+      .catch(() => {
+        // Network failure or a non-400 server error — surface it and return
+        // to step 1 instead of leaving the user stuck on a blank step 2.
+        setSafetyError("Something went wrong. Please try again.");
+        setStep(1);
+        onStepChange?.(1);
+        expandedGoalRef.current = null;
       })
       .finally(() => {
         setIsExpanding(false);
