@@ -3,6 +3,8 @@ const store = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const MAX_REQUESTS_PER_WINDOW: Record<string, number> = {
   "/api/generate-roadmap": 10,
+  "/api/extend-roadmap": 20,
+  "/api/suggest-more": 40,
   "/api/expand-goal": 20,
 };
 const DEFAULT_MAX = 20;
