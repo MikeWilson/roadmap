@@ -117,9 +117,9 @@ function RoadmapContent() {
   const encodedData = searchParams.get("d");
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950 print:min-h-0 print:bg-white">
       <Header />
-      <div className="flex min-w-0 flex-1 flex-col pt-14">
+      <div className="flex min-w-0 flex-1 flex-col pt-14 print:pt-0">
         {encodedData ? (
           <DecodedRoadmapContent encodedData={encodedData} />
         ) : (

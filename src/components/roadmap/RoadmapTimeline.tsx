@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useMemo, useEffect } from "react";
+import { flushSync } from "react-dom";
+import { track } from "@vercel/analytics";
 import type { SpineEntry } from "@/lib/hooks/useRoadmapGeneration";
 import type { RoadmapData, RoadmapNode } from "@/app/api/generate-roadmap/schema";
 import { groupIntoSpineEntries } from "@/lib/roadmap/transform";
@@ -261,6 +263,74 @@ function ShareButton() {
   );
 }
 
+function PrintIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4.5 5.5V2h7v3.5" />
+      <path d="M4.5 11H3a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 3 5.5h10A1.5 1.5 0 0 1 14.5 7v2.5A1.5 1.5 0 0 1 13 11h-1.5" />
+      <rect x="4.5" y="9" width="7" height="5" rx="0.5" />
+    </svg>
+  );
+}
+
+/**
+ * Paper checkbox — only rendered in print so the roadmap doubles as a
+ * progress tracker you can tick off by hand. Mirrors the on-screen state so
+ * steps already completed in the app print as ticked.
+ */
+function PrintCheckbox({ checked }: { checked: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      className="mr-2 hidden shrink-0 align-[-1px] print:inline-block"
+    >
+      <rect x="0.75" y="0.75" width="12.5" height="12.5" rx="2" strokeWidth="1.25" />
+      {checked && (
+        <path
+          d="M3.5 7.2l2.3 2.3 4.7-5"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
+    </svg>
+  );
+}
+
+function PrintButton() {
+  // Tracking and the date stamp happen in the timeline's `beforeprint`
+  // listener so keyboard-triggered prints behave identically.
+  const handlePrint = useCallback(() => {
+    window.print();
+  }, []);
+
+  return (
+    <button
+      onClick={handlePrint}
+      title="Print this roadmap as a checklist"
+      className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+    >
+      <PrintIcon className="h-4 w-4" />
+      <span>Print</span>
+    </button>
+  );
+}
+
 interface RoadmapTimelineProps {
   entries: SpineEntry[];
   title: string;
@@ -382,24 +452,59 @@ export function RoadmapTimeline({
   // The CTA caps the timeline once the base roadmap has finished generating.
   const ctaVisible = !isLoading && mergedRoadmapData != null;
 
+  // Progress summary for the printed header.
+  const totalSteps = allEntries.filter((e) => e.node.type !== "milestone").length;
+  const completedSteps = allEntries.filter(
+    (e) => e.node.type !== "milestone" && checkedSteps.has(e.node.id),
+  ).length;
+
+  // Stamp the printout with today's date. Listening for `beforeprint` covers
+  // both the Print button and the browser's own print shortcut, and flushing
+  // synchronously guarantees the date is in the DOM before the page is laid
+  // out for paper.
+  const [printedOn, setPrintedOn] = useState("");
+  useEffect(() => {
+    const onBeforePrint = () => {
+      track("print_roadmap", { steps: totalSteps, completed: completedSteps });
+      flushSync(() => {
+        setPrintedOn(
+          new Date().toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        );
+      });
+    };
+    window.addEventListener("beforeprint", onBeforePrint);
+    return () => window.removeEventListener("beforeprint", onBeforePrint);
+  }, [totalSteps, completedSteps]);
+
   return (
-    <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6">
+    <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pb-32 pt-8 sm:pt-14 sm:px-6 print:max-w-none print:px-0 print:pb-0 print:pt-0">
       {/* Header */}
       <div
-        className="mb-6 sm:mb-10"
+        className="mb-6 sm:mb-10 print:mb-6 print:border-b print:border-zinc-300 print:pb-4"
         style={shouldAnimate.current ? { animation: "step-fade-in 0.5s ease-out both" } : undefined}
       >
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl print:text-3xl print:text-black">
           {title}
         </h1>
         {description && (
-          <p className="mt-2 text-base text-zinc-500 dark:text-zinc-400">
+          <p className="mt-2 text-base text-zinc-500 dark:text-zinc-400 print:text-sm print:text-zinc-600">
             {description}
           </p>
         )}
-        <div className="mt-3">
+        <div className="mt-3 -ml-2.5 flex items-center gap-1 print:hidden">
           <ShareButton />
+          <PrintButton />
         </div>
+        {/* Print-only summary line */}
+        <p className="mt-3 hidden text-xs text-zinc-500 print:block">
+          {completedSteps} of {totalSteps} steps complete
+          {printedOn && <> · Printed {printedOn}</>}
+          <> · roadmap.rip</>
+        </p>
       </div>
 
       {/* Timeline */}
@@ -422,7 +527,11 @@ export function RoadmapTimeline({
             >
               {/* Vertical line - runs behind everything */}
               {!isLast && (
-                <div className={`absolute left-[19px] bottom-0 z-0 w-px bg-zinc-200 dark:bg-zinc-700 ${i === 0 ? "top-10" : "top-0"}`} />
+                <div
+                  className={`absolute left-[19px] bottom-0 z-0 w-px bg-zinc-200 dark:bg-zinc-700 print:bg-zinc-300 ${i === 0 ? "top-10" : "top-0"} ${
+                    i === allEntries.length - 1 ? "print:hidden" : ""
+                  }`}
+                />
               )}
 
               <div className="relative z-10">
@@ -454,11 +563,13 @@ export function RoadmapTimeline({
 
         {/* Ask-for-more CTA — caps the timeline once generation is done */}
         {ctaVisible && (
-          <AskForMore
-            onSubmit={handleAskForMore}
-            isExtending={isExtending}
-            roadmap={mergedRoadmapData}
-          />
+          <div className="print:hidden">
+            <AskForMore
+              onSubmit={handleAskForMore}
+              isExtending={isExtending}
+              roadmap={mergedRoadmapData}
+            />
+          </div>
         )}
       </div>
 
@@ -706,27 +817,28 @@ function StepRow({
   return (
     <div>
       {/* Step header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-4 print:break-inside-avoid">
         <button
           role="checkbox"
           aria-checked={checked}
           aria-label={`Mark step ${step} as complete`}
           onClick={onToggle}
-          className="group/num relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md transition-colors hover:bg-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+          className="group/num relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-sm font-bold text-white shadow-md transition-colors hover:bg-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 print:border print:border-black print:bg-white print:text-black print:shadow-none"
         >
-          <span className={`transition-opacity duration-150 ${checked ? "opacity-0" : "group-hover/num:opacity-0"}`}>
+          <span className={`transition-opacity duration-150 print:opacity-100 ${checked ? "opacity-0" : "group-hover/num:opacity-0"}`}>
             {step}
           </span>
-          <span className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ${checked ? "opacity-100" : "opacity-0 group-hover/num:opacity-100"}`}>
+          <span className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 print:hidden ${checked ? "opacity-100" : "opacity-0 group-hover/num:opacity-100"}`}>
             {checked ? <CheckedBoxIcon /> : <UncheckedBoxIcon />}
           </span>
         </button>
         <div className={`min-w-0 flex-1 pt-1.5 transition-opacity duration-300 ${checked ? "opacity-50" : ""}`}>
           <>
-            <h3 className={`text-lg font-semibold text-zinc-900 dark:text-zinc-100 ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600" : ""}`}>
+            <h3 className={`text-lg font-semibold text-zinc-900 dark:text-zinc-100 print:text-base print:text-black ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600 print:decoration-zinc-400" : ""}`}>
+              <PrintCheckbox checked={checked} />
               {label}
             </h3>
-            <p className={`mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600" : ""}`}>
+            <p className={`mt-0.5 text-base leading-relaxed text-zinc-500 dark:text-zinc-400 print:text-sm print:leading-snug print:text-zinc-600 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600 print:decoration-zinc-400" : ""}`}>
               {description}
             </p>
             {action && (
@@ -734,11 +846,11 @@ function StepRow({
                 href={actionUrl(action)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
+                className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit print:mt-0.5 print:text-xs print:text-zinc-500"
               >
                 <ActionBadge action={action} />
                 <span className="min-w-0 truncate">{actionLabel(action)}</span>
-                <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
+                <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100 print:hidden" />
               </a>
             )}
           </>
@@ -747,23 +859,24 @@ function StepRow({
 
       {/* Sub-steps (branches) */}
       {branches.length > 0 && (
-        <div className={`ml-[19px] border-l border-zinc-200 pl-8 pt-3 pb-4 sm:pl-8 dark:border-zinc-700 transition-opacity duration-300 ${checked ? "opacity-50" : ""}`}>
-          <div className="flex flex-col gap-2.5">
+        <div className={`ml-[19px] border-l border-zinc-200 pl-8 pt-3 pb-4 sm:pl-8 dark:border-zinc-700 transition-opacity duration-300 print:border-zinc-300 print:pb-3 ${checked ? "opacity-50" : ""}`}>
+          <div className="flex flex-col gap-2.5 print:gap-1.5">
             {branches.map((branch, j) => (
               <div
                 key={branch.id}
-                className="flex items-start gap-3"
+                className="flex items-start gap-3 print:break-inside-avoid"
                 style={animate ? { animation: `step-fade-in 0.5s ease-out ${(j + 1) * 0.06}s both` } : undefined}
               >
-                <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500">
+                <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs font-medium text-zinc-400 dark:text-zinc-500 print:text-zinc-500">
                   {step}
                   {SUBSTEP_LETTERS[j]}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span className={`text-base font-medium text-zinc-700 dark:text-zinc-300 ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600" : ""}`}>
+                  <PrintCheckbox checked={checked} />
+                  <span className={`text-base font-medium text-zinc-700 dark:text-zinc-300 print:text-sm print:text-black ${checked ? "line-through decoration-zinc-400 dark:decoration-zinc-600 print:decoration-zinc-400" : ""}`}>
                     {branch.label}
                   </span>
-                  <span className={`ml-1.5 text-base text-zinc-500 dark:text-zinc-400 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600" : ""}`}>
+                  <span className={`ml-1.5 text-base text-zinc-500 dark:text-zinc-400 print:text-sm print:text-zinc-600 ${checked ? "line-through decoration-zinc-300 dark:decoration-zinc-600 print:decoration-zinc-400" : ""}`}>
                     {branch.description}
                   </span>
                   {branch.action && (
@@ -771,13 +884,13 @@ function StepRow({
                       href={actionUrl(branch.action)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/card mt-1 flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit"
+                      className="group/card mt-1 flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 sm:w-fit print:mt-0.5 print:text-xs print:text-zinc-500"
                     >
                       <ActionBadge action={branch.action} />
                       <span className="min-w-0 truncate">
                         {actionLabel(branch.action)}
                       </span>
-                      <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
+                      <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100 print:hidden" />
                     </a>
                   )}
                 </div>
@@ -802,23 +915,23 @@ function MilestoneRow({
   action?: string;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start sm:gap-4 py-2">
+    <div className="flex flex-col sm:flex-row sm:items-start sm:gap-4 py-2 print:break-inside-avoid print:flex-row print:gap-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg text-emerald-600 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-400 print:border print:border-emerald-700 print:bg-white print:text-emerald-700 print:shadow-none">
           &#9733;
         </div>
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:hidden dark:text-emerald-500">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:hidden dark:text-emerald-500 print:hidden">
           Milestone
         </span>
       </div>
-      <div className="ml-14 mt-2 min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30">
-        <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500">
+      <div className="ml-14 mt-2 min-w-0 flex-1 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 sm:ml-0 sm:mt-0 dark:border-emerald-800 dark:bg-emerald-950/30 print:ml-0 print:mt-0 print:border-emerald-700 print:bg-white">
+        <div className="hidden text-[10px] font-semibold uppercase tracking-widest text-emerald-500 sm:block dark:text-emerald-500 print:block print:text-emerald-700">
           Milestone
         </div>
-        <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200">
+        <div className="text-base font-semibold text-emerald-900 dark:text-emerald-200 print:text-black">
           {label}
         </div>
-        <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60">
+        <p className="mt-0.5 text-sm text-emerald-700/60 dark:text-emerald-400/60 print:text-zinc-600">
           {description}
         </p>
         {action && (
@@ -826,11 +939,11 @@ function MilestoneRow({
             href={actionUrl(action)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 sm:w-fit"
+            className="group/card mt-1.5 inline-flex w-full min-w-0 max-w-full items-center gap-1.5 rounded-lg px-2 py-0.5 -mx-2 text-sm text-emerald-500 transition-colors hover:bg-emerald-100 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300 sm:w-fit print:mt-0.5 print:text-xs print:text-zinc-500"
           >
             <ActionBadge action={action} />
             <span className="min-w-0 truncate">{actionLabel(action)}</span>
-            <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100" />
+            <ExternalIcon className="inline-flex transition-opacity sm:opacity-0 sm:group-hover/card:opacity-100 print:hidden" />
           </a>
         )}
       </div>
@@ -848,7 +961,7 @@ const SKELETON_WIDTHS = [
 
 function SkeletonRows() {
   return (
-    <>
+    <div className="print:hidden">
       {SKELETON_WIDTHS.map((widths, i) => (
         <div
           key={`skeleton-${i}`}
@@ -871,6 +984,6 @@ function SkeletonRows() {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }

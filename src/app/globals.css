@@ -156,3 +156,35 @@ body {
   }
 }
 
+
+/* ── Print ──
+   The roadmap prints as a light, ink-friendly checklist. Component-level
+   tweaks use Tailwind's `print:` variant; this block handles page setup and
+   anything that can't be expressed per element. */
+@media print {
+  @page {
+    margin: 14mm 16mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  * {
+    /* Keep the thin timeline rules and outlined markers visible. */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    /* Entrance animations use `both` fill — with the animation removed every
+       element sits at its final, fully visible state. */
+    animation: none !important;
+    transition: none !important;
+    /* Nothing should stay pinned or stacked on paper. */
+    backdrop-filter: none !important;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
