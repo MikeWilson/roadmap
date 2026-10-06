@@ -2,594 +2,32 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import {
+  FALLBACK_EMOJIS,
+  IDLE_EMOJIS,
+  SUGGESTIONS,
+  matchGoalTheme,
+  pickMany,
+  setForMatch,
+  setLedBy,
+  type ThemeKey,
+  type ThemeMatch,
+} from "@/lib/emoji";
 
-const SUGGESTIONS = [
-  // --- initial 8 ---
-  ["🎣", "Learn to fly fish"],
-  ["🏃", "Run a marathon"],
-  ["🎸", "Learn to play guitar"],
-  ["💼", "Start a small business"],
-  ["🐱", "Raise a kitten"],
-  ["🥌", "Learn curling"],
-  ["🕯️", "Make a candle"],
-  // --- batch 2 (8 more → 16) ---
-  ["📖", "Write a novel"],
-  ["🤿", "Get scuba certified"],
-  ["🍺", "Brew my own beer"],
-  ["🏄", "Learn to surf"],
-  ["📱", "Build a mobile app"],
-  ["🥬", "Grow a vegetable garden"],
-  ["🧘", "Become a yoga instructor"],
-  ["🍄", "Become a mushroom forager"],
-  // --- batch 3 (16 more → 32) ---
-  ["🚗", "Restore a vintage car"],
-  ["⛵", "Learn to sail"],
-  ["🎙️", "Start a podcast"],
-  ["🐝", "Become a beekeeper"],
-  ["♟️", "Master chess"],
-  ["🏺", "Learn pottery"],
-  ["🏅", "Train for an Ironman"],
-  ["🏠", "Build a cabin"],
-  ["🤟", "Learn sign language"],
-  ["🍷", "Become a sommelier"],
-  ["🎥", "Start a YouTube channel"],
-  ["⚒️", "Learn blacksmithing"],
-  ["✈️", "Get a pilot's license"],
-  ["🎨", "Master watercolor painting"],
-  ["🛸", "Build a drone"],
-  ["🧗", "Learn to rock climb"],
-  // --- the full glorious list ---
-  ["📸", "Become a wildlife photographer"],
-  ["🔥", "Learn to weld"],
-  ["🚚", "Start a food truck"],
-  ["🎬", "Write a screenplay"],
-  ["🥊", "Learn kickboxing"],
-  ["🌳", "Build a treehouse"],
-  ["🍞", "Master sourdough baking"],
-  ["🎧", "Learn to DJ"],
-  ["❤️", "Start a nonprofit"],
-  ["🤺", "Learn fencing"],
-  ["🔭", "Build a telescope"],
-  ["🛹", "Learn to skateboard"],
-  ["🦋", "Start a butterfly garden"],
-  ["📐", "Master origami"],
-  ["🌌", "Learn astrophotography"],
-  ["🤖", "Build an Arduino robot"],
-  ["⛷️", "Learn to ski"],
-  ["📚", "Start a book club"],
-  ["☕", "Master espresso making"],
-  ["🏹", "Learn archery"],
-  ["🏎️", "Build a go-kart"],
-  ["🥃", "Become a whiskey connoisseur"],
-  ["🪵", "Learn woodworking"],
-  ["✍️", "Start a blog"],
-  ["🫧", "Learn glassblowing"],
-  ["🖨️", "Build a 3D printer"],
-  ["🥖", "Master bread baking"],
-  ["🤸", "Learn parkour"],
-  ["🌻", "Start a community garden"],
-  ["🐠", "Become a certified diver"],
-  ["💎", "Learn lapidary"],
-  ["⚙️", "Build a CNC machine"],
-  ["🍄", "Learn to forage"],
-  ["🧺", "Start a farmers market stand"],
-  ["🪢", "Master macramé"],
-  ["🏍️", "Learn to ride a motorcycle"],
-  ["🎹", "Build a synthesizer"],
-  ["🏔️", "Become a mountain guide"],
-  ["🧳", "Learn leatherworking"],
-  ["👕", "Start a clothing brand"],
-  ["🍣", "Master sushi making"],
-  ["🪂", "Learn to paraglide"],
-  ["🏡", "Build a tiny house"],
-  ["✒️", "Learn calligraphy"],
-  ["🖼️", "Learn screen printing"],
-  ["🕯️", "Start a candle business"],
-  ["🍜", "Master Thai cooking"],
-  ["🏂", "Learn to snowboard"],
-  ["🛶", "Build a kayak"],
-  ["🏞️", "Become a trail runner"],
-  ["📕", "Learn bookbinding"],
-  ["🧀", "Start a cheese-making hobby"],
-  ["☕", "Master latte art"],
-  ["🛼", "Learn to inline skate"],
-  ["📻", "Become a ham radio operator"],
-  ["💃", "Learn to tap dance"],
-  ["🪴", "Start a terrarium business"],
-  ["🍛", "Master Indian cooking"],
-  ["🌊", "Learn to windsurf"],
-  ["🍕", "Build a pizza oven"],
-  ["🏋️", "Become a CrossFit athlete"],
-  ["🧺", "Learn basket weaving"],
-  ["🫖", "Start a kombucha brewery"],
-  ["🥐", "Master French pastry"],
-  ["🐴", "Learn horseback riding"],
-  ["🔥", "Build a fire pit"],
-  ["🐦", "Become a bird watcher"],
-  ["🤹", "Learn to juggle"],
-  ["🌶️", "Start a hot sauce brand"],
-  ["🥟", "Master dumpling making"],
-  ["⛸️", "Learn ice skating"],
-  ["🥩", "Build a smokehouse"],
-  ["🎤", "Become a standup comedian"],
-  ["🧶", "Learn to knit"],
-  ["🧼", "Start a soap business"],
-  ["🍜", "Master ramen from scratch"],
-  ["🛶", "Learn to paddleboard"],
-  ["🚤", "Build a boat"],
-  ["🏊", "Become a marathon swimmer"],
-  ["🧵", "Learn embroidery"],
-  ["💍", "Start a jewelry line"],
-  ["🍖", "Master BBQ smoking"],
-  ["🏄", "Learn to wakeboard"],
-  ["🌿", "Build a greenhouse"],
-  ["🎙️", "Become a voice actor"],
-  ["🧶", "Learn to crochet"],
-  ["🪴", "Start a plant nursery"],
-  ["🫙", "Master fermentation"],
-  ["🪁", "Learn to kitesurf"],
-  ["🧖", "Build a sauna"],
-  ["🧠", "Become a trivia host"],
-  ["🔪", "Learn whittling"],
-  ["🛍️", "Start a vintage shop"],
-  ["🍫", "Master chocolate making"],
-  ["🦇", "Learn to spelunk"],
-  ["🧗", "Build a climbing wall"],
-  ["🐕", "Become a dog trainer"],
-  ["🏺", "Learn to throw pottery on a wheel"],
-  ["💐", "Start a flower farm"],
-  ["🍝", "Master pasta from scratch"],
-  ["🚵", "Learn to mountain bike"],
-  ["🎛️", "Build a recording studio"],
-  ["📜", "Become a local historian"],
-  ["🧵", "Learn to spin yarn"],
-  ["📷", "Start a photography business"],
-  ["🥟", "Master dim sum"],
-  ["⛸️", "Learn figure skating"],
-  ["🛹", "Build a skatepark"],
-  ["🏕️", "Become a scoutmaster"],
-  ["🪟", "Learn to make stained glass"],
-  ["🧁", "Start a bakery"],
-  ["🎭", "Learn improv comedy"],
-  ["🦜", "Raise backyard chickens"],
-  ["🧊", "Learn ice sculpting"],
-  ["🎪", "Learn aerial silks"],
-  ["🌾", "Start a homestead"],
-  ["🧬", "Learn bioinformatics"],
-  ["🏰", "Build a medieval forge"],
-  ["🎯", "Master darts"],
-  ["🧲", "Build an electromagnet"],
-  ["🦷", "Learn dental carving"],
-  ["🪨", "Build a rock garden"],
-  ["🌶️", "Grow the hottest pepper"],
-  ["🎲", "Design a board game"],
-  ["🧪", "Learn home chemistry"],
-  ["🏺", "Make my own ceramics"],
-  ["🧊", "Learn to make cocktails"],
-  ["🎻", "Learn the violin"],
-  ["🪕", "Learn the banjo"],
-  ["🥁", "Learn the drums"],
-  ["🎷", "Learn the saxophone"],
-  ["🎺", "Learn the trumpet"],
-  ["🪈", "Learn the flute"],
-  ["🪗", "Learn the accordion"],
-  ["📝", "Write poetry"],
-  ["🎮", "Make an indie video game"],
-  ["🖥️", "Build a PC from scratch"],
-  ["🔐", "Learn cybersecurity"],
-  ["📊", "Master data visualization"],
-  ["🌐", "Learn a new language"],
-  ["🇯🇵", "Learn Japanese"],
-  ["🇫🇷", "Learn French"],
-  ["🇰🇷", "Learn Korean"],
-  ["🇧🇷", "Learn Portuguese"],
-  ["🇸🇦", "Learn Arabic"],
-  ["🇨🇳", "Learn Mandarin"],
-  ["🧮", "Learn to speed-solve Rubik's cubes"],
-  ["🪄", "Learn magic tricks"],
-  ["🎭", "Join a theater troupe"],
-  ["💪", "Get a pull-up to handstand"],
-  ["🧗", "Climb a 14er"],
-  ["🏜️", "Hike the Appalachian Trail"],
-  ["🏔️", "Summit Mount Rainier"],
-  ["🌋", "Visit every national park"],
-  ["🛤️", "Bike across the country"],
-  ["🏁", "Race in a triathlon"],
-  ["🦈", "Swim with sharks"],
-  ["🐋", "Go whale watching"],
-  ["🐎", "Learn polo"],
-  ["🎳", "Join a bowling league"],
-  ["⛳", "Break 80 in golf"],
-  ["🏓", "Get competitive at ping pong"],
-  ["🥋", "Earn a black belt"],
-  ["🤼", "Learn wrestling"],
-  ["🏌️", "Master disc golf"],
-  ["🎾", "Win a tennis tournament"],
-  ["🧘", "Complete a silent retreat"],
-  ["📿", "Start a meditation practice"],
-  ["🖋️", "Learn hand lettering"],
-  ["🎞️", "Make a short film"],
-  ["🎙️", "Produce a documentary"],
-  ["📺", "Start a Twitch stream"],
-  ["🖌️", "Learn oil painting"],
-  ["✏️", "Learn to draw portraits"],
-  ["🗿", "Learn stone carving"],
-  ["🪆", "Learn wood turning"],
-  ["🧱", "Build a brick oven"],
-  ["🔩", "Restore vintage tools"],
-  ["🏚️", "Flip a house"],
-  ["🪑", "Build custom furniture"],
-  ["🛋️", "Learn upholstery"],
-  ["🔦", "Build a van conversion"],
-  ["⚡", "Install solar panels at home"],
-  ["🌱", "Start composting"],
-  ["🐛", "Start a worm farm"],
-  ["🐟", "Build an aquaponics system"],
-  ["🫚", "Grow medicinal herbs"],
-  ["🍇", "Make my own wine"],
-  ["🍎", "Start an orchard"],
-  ["🥕", "Run a CSA farm share"],
-  ["🐑", "Raise sheep"],
-  ["🐐", "Start a goat dairy"],
-  ["🧈", "Learn to make butter"],
-  ["🍯", "Harvest my own honey"],
-  ["🥧", "Win a pie baking contest"],
-  ["🍰", "Master cake decorating"],
-  ["🧆", "Master Middle Eastern cooking"],
-  ["🌮", "Master Mexican cooking"],
-  ["🥘", "Master Ethiopian cooking"],
-  ["🍲", "Master Korean cooking"],
-  ["🫕", "Master fondue"],
-  ["🥩", "Dry-age my own steaks"],
-  ["🐙", "Cook every Julia Child recipe"],
-] as const;
-
-const EMOJIS = [
-  // death & rip
-  "💀", "☠️", "⚰️", "👻", "🦴", "🕯️", "⚱️", "🥀",
-  // flowers & nature
-  "🌸", "🌺", "🌻", "🌹", "🌷", "💐", "🌼", "🪻", "🌵",
-  // animals
-  "🐶", "🐱", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁",
-  "🐧", "🦉", "🦋", "🐌", "🐞", "🐙", "🐬", "🐳", "🦈",
-  "🐘", "🦒", "🦦", "🦥", "🦔", "🦩", "🦚", "🕊️", "🐢",
-  // sports & hobbies
-  "⚽", "🏀", "🎾", "🏈", "⚾", "🎳", "🏓", "🛹", "🎿",
-  "🏄", "🚴", "🏋️", "🧗", "🎣", "🏕️",
-  // music & arts
-  "🎸", "🎹", "🥁", "🎺", "🎻", "🎨", "🖌️", "📷", "🎬",
-  // food & cooking
-  "🍕", "🍣", "🌮", "🍰", "🧁", "🍩", "🥐", "🍜", "🥑",
-  // travel & adventure
-  "🏔️", "🌋", "🏝️", "🗺️", "🧭", "⛵", "🚀", "✈️", "🎪",
-  // tools & making
-  "🔧", "🔨", "🪚", "🧲", "💡", "🔬", "🔭", "🧪", "🪴",
-  // books & learning
-  "📚", "🎓", "✏️", "🧩", "♟️", "🎲",
-  // misc fun
-  "🎯", "🪁", "🛶", "⛺", "🎠", "🎡", "🌈", "⭐", "🔥", "🛋️",
-];
-
-const SOMBER_EMOJIS = [
-  "😴",
-  "🥱",
-  "🛋️",
-  "💀",
-  "☠️",
-  "⚰️",
-  "👻",
-  "🦴",
-  "🕯️",
-  "⚱️",
-  "🥀",
-];
-const FUN_EMOJIS = EMOJIS.filter((emoji) => !SOMBER_EMOJIS.includes(emoji));
-const DEFAULT_EMOJIS = ["🥱", "🛋️", "😴"];
-
-function pickRandom(pool: string[], count: number, exclude: string[]): string[] {
-  const available = pool.filter((e) => !exclude.includes(e));
-  const result: string[] = [];
-  // Clamp to what's actually available — splicing past the end would push
-  // `undefined` into the result and render blank emoji tiles.
-  const n = Math.min(count, available.length);
-  for (let i = 0; i < n; i++) {
-    const idx = Math.floor(Math.random() * available.length);
-    result.push(available.splice(idx, 1)[0]);
-  }
-  return result;
-}
-
-// Themed emoji pools for pill hover — emojis adapt to match the hovered suggestion
-const THEME_POOLS: Record<string, string[]> = {
-  water: ["🐟", "🐠", "🦈", "🐋", "🐬", "🌊", "⛵", "🚣", "🐚", "🪸", "🦑", "🐡", "🦞", "🏄", "🤿", "🎣", "🚤"],
-  run: ["🏃", "👟", "🏅", "🥇", "💨", "🏁", "🎽", "⏱️", "🏆", "💪", "🦵", "🥈"],
-  music: ["🎵", "🎶", "🎸", "🎹", "🎻", "🥁", "🎷", "🎺", "🎤", "🎧", "🎼", "🪕", "🪗", "🪈"],
-  cook: ["🍳", "👨‍🍳", "🔪", "🥘", "🍽️", "🥄", "🍲", "🥢", "🧑‍🍳", "🫕", "🍖", "🧈", "🥣", "♨️", "🫙"],
-  bake: ["🍞", "🥐", "🧁", "🍰", "🥧", "🎂", "🍪", "🥖", "🧇", "🫓", "🧑‍🍳"],
-  drink: ["🍺", "🍷", "☕", "🥃", "🫖", "🍶", "🥂", "🍸", "🧋", "🍹", "🫗", "🍾", "🥤"],
-  tech: ["💻", "🖥️", "📱", "⌨️", "🤖", "💾", "📡", "🔌", "🧬", "📊", "💡", "🔋", "🖱️"],
-  garden: ["🌱", "🌿", "🍀", "🌳", "🌻", "🌸", "🪴", "🐝", "🦋", "🐛", "🌼", "🪻", "🌺", "☘️", "🌲"],
-  art: ["🎨", "🖌️", "✏️", "🖍️", "🖼️", "🏺", "✂️", "🪡", "🧵", "📐", "🪆", "🧶", "💎", "🎭"],
-  build: ["🔨", "🔧", "🪚", "⚒️", "🏗️", "🪵", "🧱", "📐", "🪜", "🏠", "🛠️", "⚙️", "🔩", "🪛"],
-  write: ["✍️", "📝", "📖", "📚", "🖊️", "📰", "🎬", "📺", "🎙️", "📻", "🖋️", "📜"],
-  advent: ["🏔️", "⛰️", "🏕️", "🌄", "🗻", "🧭", "🗺️", "🥾", "🎒", "⛺", "🌅", "🧗", "🏜️"],
-  biz: ["💼", "📈", "💰", "🏪", "🛍️", "📦", "🤝", "💡", "📋", "🏷️", "🧾", "🛒"],
-  animal: ["🐶", "🐱", "🐴", "🐔", "🦜", "🐦", "🐕", "🐾", "🐣", "🐰", "🦮", "🐾"],
-  farm: ["🌾", "🚜", "🐓", "🐑", "🐐", "🥛", "🧈", "🍯", "🐝", "🌽", "🥚", "🐄"],
-  combat: ["🥊", "🤺", "🏹", "🥋", "⚔️", "🛡️", "💪", "🎯", "🤼", "🦾", "👊", "🥷"],
-  lang: ["🗣️", "💬", "🌍", "🌏", "✈️", "🗺️", "📝", "🎓", "🌐", "📚", "💭", "🗨️"],
-  game: ["♟️", "🎲", "🎯", "🏆", "🧩", "🎮", "🃏", "🎳", "🏓", "⛳", "🎾", "🎱"],
-  ride: ["🚗", "🏍️", "🛹", "🚲", "🏎️", "🛞", "⛽", "🔧", "🏁", "🛻", "🛵", "🚙"],
-  science: ["🔬", "🔭", "🧪", "🧬", "⚗️", "🌌", "⭐", "🪐", "🧠", "💡", "🔮", "📡"],
-  perform: ["🎤", "🎭", "💃", "🕺", "🤹", "🎪", "🎶", "👯", "🎬", "📺", "🎙️", "🪄"],
-  zen: ["🧘", "🕉️", "🙏", "🪷", "📿", "💆", "🌸", "🫧", "☮️", "🍃"],
-  ice: ["❄️", "🧊", "⛸️", "⛷️", "🏂", "🌨️", "☃️", "🎿", "🏔️", "🦌", "⛰️"],
-};
-
-const CORE_THEME_POOLS: Record<string, string[]> = {
-  water: ["🎣", "🐟", "🐠", "🌊", "🏄", "🤿", "⛵", "🚣", "🚤"],
-  run: ["🏃", "👟", "🏅", "🏁", "💨", "🎽", "⏱️", "💪"],
-  music: ["🎵", "🎶", "🎸", "🎹", "🎤", "🎧", "🎼", "🥁"],
-  cook: ["🍳", "👨‍🍳", "🔪", "🥘", "🍽️", "🍲", "🥢", "🧑‍🍳"],
-  bake: ["🍞", "🥐", "🧁", "🍰", "🥧", "🎂", "🍪", "🥖"],
-  drink: ["🍺", "🍷", "☕", "🥃", "🍸", "🧋", "🍹", "🍾"],
-  tech: ["💻", "🖥️", "📱", "⌨️", "🤖", "💾", "🔌", "💡"],
-  garden: ["🌱", "🌿", "🌻", "🌸", "🪴", "🐝", "🦋", "🌼"],
-  art: ["🎨", "🖌️", "✏️", "🖍️", "🖼️", "🏺", "🧵", "🧶"],
-  build: ["🔨", "🔧", "🪚", "🏗️", "🧱", "🪵", "🛠️", "⚙️"],
-  write: ["✍️", "📝", "📖", "📚", "🖊️", "🎙️", "🎬", "📻"],
-  advent: ["🏔️", "🏕️", "🧭", "🗺️", "🥾", "🎒", "⛺", "🧗"],
-  biz: ["💼", "📈", "💰", "🏪", "🛍️", "🤝", "🧾", "🛒"],
-  animal: ["🐶", "🐱", "🐴", "🐔", "🦜", "🐦", "🐰", "🐾"],
-  farm: ["🌾", "🚜", "🐓", "🐑", "🐐", "🥛", "🍯", "🐄"],
-  combat: ["🥊", "🤺", "🏹", "🥋", "⚔️", "🛡️", "👊", "🥷"],
-  lang: ["🗣️", "💬", "🌍", "✈️", "🗺️", "📝", "🎓", "📚"],
-  game: ["♟️", "🎲", "🎯", "🏆", "🧩", "🎮", "🎳", "🎾"],
-  ride: ["🚗", "🏍️", "🛹", "🚲", "🏎️", "🛵", "🛞", "🏁"],
-  science: ["🔬", "🔭", "🧪", "🧬", "💡", "🌌", "⭐", "📡"],
-  perform: ["🎤", "🎭", "💃", "🕺", "🤹", "🎪", "🎶", "🎬"],
-  zen: ["🧘", "🙏", "🪷", "📿", "🍃", "🌸"],
-  ice: ["❄️", "🧊", "⛸️", "⛷️", "🏂", "🌨️", "🎿", "☃️"],
-};
-
-const PILL_SPECIFIC_POOLS: Record<string, string[]> = {
-  "🎸": ["🎸", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🎹": ["🎹", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🥁": ["🥁", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🎻": ["🎻", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🎺": ["🎺", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🎷": ["🎷", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🪕": ["🪕", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🪈": ["🪈", "🎵", "🎶", "🎤", "🎧", "🎼"],
-  "🪗": ["🪗", "🎵", "🎶", "🎤", "🎧", "🎼"],
-};
-
-type ThemeKey = keyof typeof CORE_THEME_POOLS;
-
-const KEYWORD_LEADS: Array<{ keywords: string[]; theme: ThemeKey; emoji: string }> = [
-  { keywords: ["weight lift", "weights", "weight", "lift", "gym", "workout", "strength", "muscle", "buff"], theme: "run", emoji: "🏋️" },
-  { keywords: ["run", "runner", "jog", "marathon", "race", "sprint", "trail run"], theme: "run", emoji: "🏃" },
-  { keywords: ["yoga", "meditat", "mindful", "breathwork"], theme: "zen", emoji: "🧘" },
-  { keywords: ["swim", "scuba", "dive", "freedive"], theme: "water", emoji: "🏊" },
-  { keywords: ["surf", "kitesurf", "paddleboard", "kayak", "sail", "boat", "ocean"], theme: "water", emoji: "🏄" },
-  { keywords: ["guitar", "piano", "drum", "violin", "sing", "band", "songwrit"], theme: "music", emoji: "🎸" },
-  { keywords: ["cook", "chef", "recipe", "meal prep"], theme: "cook", emoji: "🍳" },
-  { keywords: ["bake", "bread", "cake", "pastry", "sourdough"], theme: "bake", emoji: "🍞" },
-  { keywords: ["coffee", "espresso", "barista", "cocktail", "brew", "kombucha"], theme: "drink", emoji: "☕" },
-  { keywords: ["code", "program", "app", "software", "ai", "robot", "3d print", "arduino"], theme: "tech", emoji: "💻" },
-  { keywords: ["garden", "plant", "grow", "herb", "compost", "greenhouse"], theme: "garden", emoji: "🌱" },
-  { keywords: ["woodwork", "carpentr", "weld", "blacksmith", "forge", "build"], theme: "build", emoji: "🔨" },
-  { keywords: ["photograph", "photo", "camera", "film"], theme: "art", emoji: "📷" },
-  { keywords: ["knit", "crochet", "sew", "embroid", "stitch"], theme: "art", emoji: "🧶" },
-  { keywords: ["write", "book", "novel", "blog", "script", "screenplay", "podcast"], theme: "write", emoji: "✍️" },
-  { keywords: ["language", "spanish", "french", "japanese", "korean", "mandarin", "arabic", "portuguese"], theme: "lang", emoji: "🗣️" },
-  { keywords: ["chess", "board game", "video game", "gaming"], theme: "game", emoji: "♟️" },
-  { keywords: ["climb", "boulder", "hike", "backpack", "camp"], theme: "advent", emoji: "🧗" },
-];
-
-const THEME_KEYWORDS: Record<ThemeKey, string[]> = {
-  water: ["water", "swim", "surf", "sail", "boat", "ocean", "lake", "river", "dive", "scuba", "paddle", "kayak", "snorkel", "windsurf"],
-  run: ["run", "runner", "jog", "marathon", "race", "sprint", "workout", "gym", "fitness", "lift", "weight", "strength", "buff", "cardio"],
-  music: ["music", "guitar", "piano", "drum", "violin", "sing", "band", "song", "compose", "dj", "produce"],
-  cook: ["cook", "chef", "recipe", "meal", "dinner", "kitchen", "pasta", "bbq", "grill"],
-  bake: ["bake", "bread", "cake", "pastry", "sourdough", "cookie", "dessert", "pie"],
-  drink: ["coffee", "espresso", "tea", "drink", "brew", "beer", "wine", "cocktail", "kombucha", "barista"],
-  tech: ["code", "program", "software", "app", "website", "web", "robot", "ai", "tech", "data", "cyber", "arduino", "3d print"],
-  garden: ["garden", "plant", "grow", "herb", "compost", "farm", "greenhouse", "seed", "soil"],
-  art: ["art", "paint", "draw", "craft", "sculpt", "pottery", "ceramic", "design", "photo", "photograph", "calligraphy", "ink", "tattoo"],
-  build: ["build", "woodwork", "carpentr", "weld", "forge", "blacksmith", "tool", "diy", "renovat", "furniture"],
-  write: ["write", "book", "novel", "blog", "story", "screenplay", "script", "podcast", "journal"],
-  advent: ["hike", "climb", "camp", "trail", "mountain", "adventure", "explore", "backpack", "trek", "outdoor"],
-  biz: ["business", "startup", "company", "brand", "entrepreneur", "market", "sell", "sales", "shop", "side hustle"],
-  animal: ["dog", "cat", "kitten", "horse", "bird", "chicken", "pet", "animal", "train", "trainer"],
-  farm: ["farm", "chicken", "goat", "sheep", "cow", "dairy", "honey", "orchard"],
-  combat: ["box", "fight", "martial", "karate", "kickbox", "wrestle", "fenc", "jiu jitsu", "mma"],
-  lang: ["language", "spanish", "french", "german", "japanese", "korean", "mandarin", "arabic", "portuguese", "translate", "lingo"],
-  game: ["game", "gaming", "chess", "board", "darts", "tennis", "ping", "golf", "bowling", "poker"],
-  ride: ["ride", "motorcycle", "bike", "biking", "cycling", "car", "truck", "skate", "skating", "scooter"],
-  science: ["science", "chem", "physic", "biology", "telescope", "space", "astronomy", "lab", "experiment"],
-  perform: ["perform", "acting", "actor", "theater", "dance", "comedy", "improv", "standup", "sing"],
-  zen: ["yoga", "meditat", "mindful", "retreat", "breath", "stretch"],
-  ice: ["ice", "ski", "snow", "snowboard", "skate", "winter"],
-};
-
-// Map each suggestion emoji → theme key
-const PILL_THEME: Record<string, string> = {
-  // water
-  "🎣": "water", "🤿": "water", "🏄": "water", "⛵": "water", "🏊": "water",
-  "🐠": "water", "🌊": "water", "🛶": "water", "🪁": "water", "🚤": "water",
-  "🦈": "water", "🐋": "water", "🐟": "water",
-  // fitness
-  "🏃": "run", "🏅": "run", "🏋️": "run", "🤸": "run", "💪": "run",
-  "🏁": "run", "🏞️": "run",
-  // music
-  "🎸": "music", "🎹": "music", "🎻": "music", "🪕": "music", "🥁": "music",
-  "🎷": "music", "🎺": "music", "🪈": "music", "🪗": "music", "🎧": "music",
-  // cooking
-  "👨‍🍳": "cook", "🍣": "cook", "🍜": "cook", "🍕": "cook", "🥟": "cook",
-  "🍖": "cook", "🍝": "cook", "🍫": "cook", "🥩": "cook", "🧆": "cook",
-  "🌮": "cook", "🥘": "cook", "🍲": "cook", "🫕": "cook", "🐙": "cook",
-  "🍛": "cook", "🧀": "cook", "🫙": "cook", "🔪": "cook",
-  // baking
-  "🍞": "bake", "🥖": "bake", "🧁": "bake", "🍰": "bake", "🥧": "bake", "🥐": "bake",
-  // drinks
-  "🍺": "drink", "🍷": "drink", "☕": "drink", "🥃": "drink", "🫖": "drink", "🍇": "drink",
-  // tech
-  "🤖": "tech", "📱": "tech", "🖥️": "tech", "🔐": "tech", "📊": "tech",
-  "🧬": "tech", "🖨️": "tech", "🎛️": "tech", "🎮": "tech", "🛸": "tech",
-  // garden & nature
-  "🥬": "garden", "🌻": "garden", "🦋": "garden", "🌳": "garden", "🌿": "garden",
-  "🪴": "garden", "🌶️": "garden", "🐝": "garden", "🌱": "garden", "🐛": "garden",
-  "🫚": "garden", "🍎": "garden", "🥕": "garden", "💐": "garden", "🍄": "garden",
-  // art & craft
-  "🎨": "art", "✒️": "art", "🏺": "art", "🖼️": "art", "📐": "art",
-  "🧶": "art", "🧵": "art", "🪢": "art", "🖋️": "art", "🖌️": "art",
-  "🗿": "art", "🪆": "art", "🪟": "art", "💎": "art", "🫧": "art",
-  "🧳": "art", "💍": "art", "🦷": "art", "✏️": "art",
-  // building
-  "🏠": "build", "🏡": "build", "⚒️": "build", "🪵": "build", "🔥": "build",
-  "⚙️": "build", "🧱": "build", "🪑": "build", "🔩": "build", "🏚️": "build",
-  "🛋️": "build", "🔦": "build", "⚡": "build", "🏰": "build", "🪨": "build",
-  "🧖": "build",
-  // writing & media
-  "📖": "write", "🎬": "write", "🎥": "write", "✍️": "write", "📚": "write",
-  "📝": "write", "🎞️": "write", "📺": "write", "🎙️": "write", "📕": "write",
-  "📻": "write",
-  // adventure & outdoors
-  "🧗": "advent", "🏔️": "advent", "🏜️": "advent", "🌋": "advent", "🛤️": "advent",
-  "🏕️": "advent", "🪂": "advent", "✈️": "advent", "📸": "advent", "🦇": "advent",
-  // business
-  "💼": "biz", "🚚": "biz", "❤️": "biz", "🛍️": "biz", "👕": "biz",
-  "🧼": "biz", "🕯️": "biz", "🧺": "biz", "📷": "biz",
-  // animals
-  "🐴": "animal", "🐕": "animal", "🐦": "animal", "🦜": "animal", "🐎": "animal",
-  // farming
-  "🐑": "farm", "🐐": "farm", "🧈": "farm", "🍯": "farm", "🌾": "farm",
-  // combat
-  "🥊": "combat", "🤺": "combat", "🏹": "combat", "🥋": "combat", "🤼": "combat",
-  // languages
-  "🌐": "lang", "🇯🇵": "lang", "🇫🇷": "lang", "🇰🇷": "lang", "🇧🇷": "lang",
-  "🇸🇦": "lang", "🇨🇳": "lang", "🤟": "lang",
-  // games & racket sports
-  "♟️": "game", "🎲": "game", "🧮": "game", "🎯": "game", "🎳": "game",
-  "⛳": "game", "🏓": "game", "🎾": "game", "🏌️": "game",
-  // vehicles
-  "🚗": "ride", "🏍️": "ride", "🛹": "ride", "🛼": "ride", "🚵": "ride", "🏎️": "ride",
-  // science
-  "🔭": "science", "🌌": "science", "🧪": "science", "🧲": "science", "🧠": "science", "📜": "science",
-  // performance
-  "🎤": "perform", "🤹": "perform", "💃": "perform", "🎭": "perform", "🎪": "perform", "🪄": "perform",
-  // wellness
-  "🧘": "zen", "📿": "zen",
-  // ice & winter
-  "⛸️": "ice", "🧊": "ice", "⛷️": "ice", "🏂": "ice",
-};
-
-function getThemedPool(pillEmoji: string): string[] {
-  const theme = PILL_THEME[pillEmoji];
-  return theme
-    ? CORE_THEME_POOLS[theme] ?? THEME_POOLS[theme]
-    : FUN_EMOJIS;
-}
-
-function getLinkedPool(pillEmoji: string): string[] {
-  return PILL_SPECIFIC_POOLS[pillEmoji] ?? getThemedPool(pillEmoji);
-}
-
-function stemToken(token: string): string {
-  let t = token.toLowerCase();
-  if (t.endsWith("'s")) t = t.slice(0, -2);
-  if (t.endsWith("ing") && t.length > 5) return t.slice(0, -3);
-  if (t.endsWith("ers") && t.length > 5) return t.slice(0, -3);
-  if (t.endsWith("er") && t.length > 4) return t.slice(0, -2);
-  if (t.endsWith("ed") && t.length > 4) return t.slice(0, -2);
-  if (t.endsWith("es") && t.length > 4) return t.slice(0, -2);
-  if (t.endsWith("s") && t.length > 3) return t.slice(0, -1);
-  return t;
-}
-
-function normalizeText(
-  text: string,
-): { normalized: string; spaced: string; tokens: string[]; tokenSet: Set<string> } {
-  const normalized = text.toLowerCase();
-  const cleaned = normalized.replace(/[^a-z0-9]+/g, " ").trim();
-  const tokens = cleaned
-    .split(" ")
-    .map((token) => token.trim())
-    .filter(Boolean)
-    .map(stemToken);
-  return { normalized, spaced: cleaned, tokens, tokenSet: new Set(tokens) };
-}
-
-function keywordHit(
-  spaced: string,
-  tokens: string[],
-  tokenSet: Set<string>,
-  keyword: string,
-): number {
-  if (!keyword) return 0;
-  if (keyword.includes(" ")) {
-    return spaced.includes(keyword) ? 2 : 0;
-  }
-  const stemmed = stemToken(keyword);
-  if (tokenSet.has(stemmed)) return 1;
-  if (stemmed.length >= 5 && tokens.some((token) => token.startsWith(stemmed))) {
-    return 1;
-  }
-  return 0;
-}
-
-function getTextMatch(goalText: string): { theme: ThemeKey; leadEmoji?: string } | null {
-  const { normalized, spaced, tokens, tokenSet } = normalizeText(goalText);
-  if (!normalized.trim()) return null;
-
-  for (const lead of KEYWORD_LEADS) {
-    if (lead.keywords.some((keyword) => keywordHit(spaced, tokens, tokenSet, keyword) > 0)) {
-      return { theme: lead.theme, leadEmoji: lead.emoji };
-    }
-  }
-
-  let bestTheme: ThemeKey | null = null;
-  let bestScore = 0;
-  (Object.entries(THEME_KEYWORDS) as [ThemeKey, string[]][]).forEach(
-    ([theme, keywords]) => {
-      let score = 0;
-      for (const keyword of keywords) {
-        score += keywordHit(spaced, tokens, tokenSet, keyword);
-      }
-      if (score > bestScore) {
-        bestScore = score;
-        bestTheme = theme;
-      }
-    },
-  );
-
-  return bestTheme ? { theme: bestTheme } : null;
-}
-
-function pickTextMatchedEmojis(
-  match: { theme: ThemeKey; leadEmoji?: string },
-  exclude: string[],
-): string[] {
-  const pool = CORE_THEME_POOLS[match.theme] ?? THEME_POOLS[match.theme];
-  if (!pool) return pickRandom(FUN_EMOJIS, 3, exclude);
-
-  if (match.leadEmoji) {
-    const filteredPool = pool.filter((emoji) => emoji !== match.leadEmoji);
-    return [match.leadEmoji, ...pickRandom(filteredPool, 2, exclude)];
-  }
-
-  return pickRandom(pool, 3, exclude);
-}
+/** How many emojis the row between 🌱 and 🪦 shows. */
+const EMOJI_SET_SIZE = 3;
 
 export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => void }) {
-  const [emojis, setEmojis] = useState(DEFAULT_EMOJIS);
+  const [emojis, setEmojis] = useState<string[]>([...IDLE_EMOJIS]);
   const [emojiKey, setEmojiKey] = useState(0);
   const hasMounted = useRef(false);
-  const lastTextMatchRef = useRef<{ theme: ThemeKey; leadEmoji?: string } | null>(null);
+  const lastTextMatchRef = useRef<ThemeMatch | null>(null);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [goal, setGoal] = useState("");
   const [goalEmoji, setGoalEmoji] = useState("🎯");
+  // The theme handed to the roadmap page, so its loading screen shows the
+  // same family of emojis the visitor was just looking at.
+  const [goalTheme, setGoalTheme] = useState<ThemeKey | null>(null);
   const [hasEngaged, setHasEngaged] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
   const [goalDescription, setGoalDescription] = useState("");
@@ -692,17 +130,10 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     [autoResize],
   );
 
-  const pickThemedEmojisForSuggestion = useCallback(
+  const emojisForSuggestion = useCallback(
     (index: number, exclude: string[]) => {
-      const [pillEmoji] = SUGGESTIONS[index];
-      const pool = getLinkedPool(pillEmoji);
-      const uniquePool = pool.includes(pillEmoji) ? pool : [pillEmoji, ...pool];
-      const rest = pickRandom(
-        uniquePool.filter((emoji) => emoji !== pillEmoji),
-        2,
-        exclude,
-      );
-      return [pillEmoji, ...rest];
+      const { emoji, theme } = SUGGESTIONS[index];
+      return setLedBy(emoji, theme, EMOJI_SET_SIZE, exclude);
     },
     [],
   );
@@ -788,9 +219,11 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     lastTextMatchRef.current = null;
     setSuggestionIndex((i) => {
       const nextIndex = (i + 1) % SUGGESTIONS.length;
-      setGoal(SUGGESTIONS[nextIndex][1]);
-      setGoalEmoji(SUGGESTIONS[nextIndex][0]);
-      setEmojis((prev) => pickThemedEmojisForSuggestion(nextIndex, prev));
+      const next = SUGGESTIONS[nextIndex];
+      setGoal(next.text);
+      setGoalEmoji(next.emoji);
+      setGoalTheme(next.theme);
+      setEmojis((prev) => emojisForSuggestion(nextIndex, prev));
       setEmojiKey((k) => k + 1);
       return nextIndex;
     });
@@ -814,7 +247,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
     if (location.trim()) {
       params.set("location", location.trim());
     }
-    const theme = PILL_THEME[goalEmoji] ?? lastTextMatchRef.current?.theme;
+    const theme = goalTheme ?? lastTextMatchRef.current?.theme;
     if (theme) {
       params.set("emojiTheme", theme);
     }
@@ -1076,25 +509,35 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               const trimmed = nextGoal.trim();
               if (!trimmed) {
                 lastTextMatchRef.current = null;
-                setEmojis(DEFAULT_EMOJIS);
+                setGoalTheme(null);
+                setEmojis([...IDLE_EMOJIS]);
                 setEmojiKey((k) => k + 1);
                 return;
               }
 
-              const suggestionMatch = SUGGESTIONS.find(([, t]) => t.toLowerCase() === trimmed.toLowerCase());
-              if (suggestionMatch) setGoalEmoji(suggestionMatch[0]);
+              const lowered = trimmed.toLowerCase();
+              const suggestionMatch = SUGGESTIONS.find(
+                (s) => s.text.toLowerCase() === lowered,
+              );
+              if (suggestionMatch) {
+                setGoalEmoji(suggestionMatch.emoji);
+                setGoalTheme(suggestionMatch.theme);
+              }
 
-              const match = getTextMatch(trimmed);
+              const match = matchGoalTheme(trimmed);
               if (match) {
                 setHasEngaged(true);
-                if (!suggestionMatch && match.leadEmoji) setGoalEmoji(match.leadEmoji);
+                if (!suggestionMatch) {
+                  if (match.leadEmoji) setGoalEmoji(match.leadEmoji);
+                  setGoalTheme(match.theme);
+                }
                 const prevMatch = lastTextMatchRef.current;
                 const isSameMatch =
                   prevMatch?.theme === match.theme &&
                   prevMatch?.leadEmoji === match.leadEmoji;
                 if (!isSameMatch) {
                   lastTextMatchRef.current = match;
-                  setEmojis((prev) => pickTextMatchedEmojis(match, prev));
+                  setEmojis((prev) => setForMatch(match, EMOJI_SET_SIZE, prev));
                   setEmojiKey((k) => k + 1);
                 }
                 return;
@@ -1103,11 +546,11 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               if (!hasEngaged) {
                 setHasEngaged(true);
                 lastTextMatchRef.current = null;
-                setEmojis(pickRandom(FUN_EMOJIS, 3, emojis));
+                setEmojis(pickMany(FALLBACK_EMOJIS, EMOJI_SET_SIZE, emojis));
                 setEmojiKey((k) => k + 1);
               }
             }}
-            placeholder={SUGGESTIONS[suggestionIndex][1]}
+            placeholder={SUGGESTIONS[suggestionIndex].text}
             className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 pr-12 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 sm:pr-4"
           />
           <button
@@ -1141,7 +584,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
         </button>
       </form>
       <div className="mt-6 flex flex-wrap justify-center gap-1.5 sm:gap-2">
-        {SUGGESTIONS.slice(0, visibleCount).map(([emoji, text], index) => (
+        {SUGGESTIONS.slice(0, visibleCount).map(({ emoji, text, theme }, index) => (
           <button
             key={text}
             onClick={() => {
@@ -1149,10 +592,9 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               lastTextMatchRef.current = null;
               setGoal(text);
               setGoalEmoji(emoji);
+              setGoalTheme(theme);
               if (hoveredSuggestionRef.current !== index) {
-                setEmojis((prev) =>
-                  pickThemedEmojisForSuggestion(index, prev),
-                );
+                setEmojis((prev) => emojisForSuggestion(index, prev));
                 setEmojiKey((k) => k + 1);
               }
               hoveredSuggestionRef.current = null;
@@ -1163,7 +605,7 @@ export function GoalInput({ onStepChange }: { onStepChange?: (step: 1 | 2) => vo
               hoveredSuggestionRef.current = index;
               setHasEngaged(true);
               lastTextMatchRef.current = null;
-              setEmojis((prev) => pickThemedEmojisForSuggestion(index, prev));
+              setEmojis((prev) => emojisForSuggestion(index, prev));
               setEmojiKey((k) => k + 1);
             }}
             className="group inline-flex animate-pill-fade-in whitespace-nowrap rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[13px] text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 sm:px-3 sm:py-1.5 sm:text-sm"
