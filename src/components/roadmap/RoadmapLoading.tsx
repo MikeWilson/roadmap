@@ -1,22 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { getEmojisForTheme, getEmojisForGoal } from "@/lib/emojiThemes";
-
-function pickRandom(pool: string[], exclude: string[]): string {
-  const available = pool.filter((e) => !exclude.includes(e));
-  const source = available.length > 0 ? available : pool;
-  return source[Math.floor(Math.random() * source.length)];
-}
+import { useState, useEffect } from "react";
+import { pickOne, poolForGoal } from "@/lib/emoji";
 
 export function RoadmapLoading({ goal, emojiTheme }: { goal: string; emojiTheme?: string }) {
-  const poolRef = useRef(
-    (emojiTheme && getEmojisForTheme(emojiTheme)) || getEmojisForGoal(goal),
-  );
-  const pool = poolRef.current;
+  // Resolved once and held for the life of the screen, so the pool cannot
+  // change mid-animation. `wide: true` — this cycles one emoji every 1.2s for
+  // as long as generation takes, so it wants every variation a theme has, not
+  // just the core few.
+  const [pool] = useState(() => poolForGoal(goal, emojiTheme, { wide: true }));
 
   const [current, setCurrent] = useState(() => ({
-    emoji: pickRandom(pool, []),
+    emoji: pickOne(pool),
     key: 0,
     isFirst: true,
   }));
@@ -30,7 +25,7 @@ export function RoadmapLoading({ goal, emojiTheme }: { goal: string; emojiTheme?
       setCurrent((prev) => {
         setExiting({ emoji: prev.emoji, key: prev.key });
         return {
-          emoji: pickRandom(pool, [prev.emoji]),
+          emoji: pickOne(pool, [prev.emoji]),
           key: prev.key + 1,
           isFirst: false,
         };
