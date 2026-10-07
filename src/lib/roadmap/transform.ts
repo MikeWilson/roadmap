@@ -1,5 +1,6 @@
 import type { RoadmapData, RoadmapNode } from "@/app/api/generate-roadmap/schema";
 import type { RoadmapFlowNode, RoadmapFlowEdge } from "./types";
+import { cleanNodeActions } from "./actions";
 
 export type SpineEntry = {
   node: RoadmapNode;
@@ -7,13 +8,15 @@ export type SpineEntry = {
 };
 
 export function groupIntoSpineEntries(nodes: RoadmapNode[]): SpineEntry[] {
-  const completeNodes = nodes.filter(
-    (n): n is RoadmapNode =>
-      n != null &&
-      n.id != null &&
-      n.label != null &&
-      n.type != null &&
-      n.order != null,
+  const completeNodes = cleanNodeActions(
+    nodes.filter(
+      (n): n is RoadmapNode =>
+        n != null &&
+        n.id != null &&
+        n.label != null &&
+        n.type != null &&
+        n.order != null,
+    ),
   );
 
   const spineNodes = completeNodes

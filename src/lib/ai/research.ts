@@ -1,9 +1,13 @@
+import { stripTrackingParams } from "@/lib/roadmap/actions";
+
 type ResearchResult = {
   summary: string;
   sources: string[];
 };
 
-const DEFAULT_TIMEOUT_MS = 9000;
+// The web-search model usually needs 8-15s to find YouTube/Wikipedia pages;
+// 9s dropped most results. Generation starts streaming once this resolves.
+const DEFAULT_TIMEOUT_MS = 15000;
 const OUTPUT_CHAR_LIMIT = 1200;
 
 function extractOutputText(data: unknown): string {
@@ -36,7 +40,7 @@ function extractOutputText(data: unknown): string {
 function extractSources(text: string): string[] {
   const urls = text.match(/https?:\/\/[^\s)\]]+/g) || [];
   const cleaned = urls
-    .map((url) => url.replace(/[.,;]+$/, ""))
+    .map((url) => stripTrackingParams(url.replace(/[.,;]+$/, "")))
     .filter((url) => url.length > 0);
   return Array.from(new Set(cleaned)).slice(0, 8);
 }
@@ -56,17 +60,16 @@ export async function runResearch({
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   const inputLines = [
-    "You are doing a quick web-research gut check for a learning roadmap.",
+    "Quick web check for someone starting a new hobby or skill.",
     `Goal: ${goal}`,
     ...(location ? [`Location: ${location}`] : []),
     "",
     "Return:",
-    "- 3-6 short bullets summarizing the typical learning phases or",
-    "  widely recommended open knowledge sources (Wikipedia, YouTube channels,",
-    "  MIT OpenCourseWare, wikis, forums, official docs, community guides)",
-    "  at a high level. Prioritize open public knowledge over courses of any kind.",
-    "- A line starting with 'Sources:' followed by 3-6 URLs.",
-    "Keep the response under 120 words.",
+    "- 3-4 short bullets: what beginners are told to actually do first, and",
+    "  the YouTube channels and Wikipedia pages forum threads most recommend.",
+    "- A line starting with 'Sources:' followed by 3-5 URLs. Prefer",
+    "  youtube.com and wikipedia.org; avoid retailer and course pages.",
+    "One or two searches is enough. Keep the response under 100 words.",
   ];
 
   try {

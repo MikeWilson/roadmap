@@ -5,12 +5,14 @@ export const roadmapNodeSchema = z.object({
   label: z.string().describe("Short display label, max 40 chars, sentence case (capitalize only the first word and proper nouns)"),
   description: z
     .string()
-    .describe("One-sentence explanation of this topic/skill"),
+    .describe(
+      "One plain sentence, 12 words or fewer, saying what to do. No justification clauses (no 'so that', 'because', 'which helps')."
+    ),
   action: z
     .string()
     .nullable()
     .describe(
-      'A specific, concrete resource label, search-query phrase, or direct URL. If a research source URL is directly relevant to this node, use the full URL (e.g. "https://en.wikipedia.org/wiki/Music_theory"). Otherwise use a short search-query phrase like \'YouTube: beginner soldering\', \'MDN HTML basics\', \'guitar tuning by ear guide\'. Avoid full sentences or vague filler. For milestone nodes, set to null unless there is a genuinely useful resource to link to.'
+      'Exactly one resource: a YouTube search phrase (\'YouTube: beginner soldering\'), a Wikipedia page, a short search phrase (\'MDN HTML basics\'), or a direct URL when it is the canonical page for this exact node (e.g. "https://en.wikipedia.org/wiki/Music_theory"). Never combine multiple resources in one string. For milestone nodes, null unless there is a genuinely useful link.'
     ),
   type: z.enum(["spine", "branch", "milestone"]).describe(
     "spine = main vertical path item, branch = sub-topic off the spine, milestone = checkpoint/goal"
