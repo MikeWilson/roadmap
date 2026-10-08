@@ -9,7 +9,7 @@ The output is a visual roadmap:
 
 Rules:
 1. Step 1 is something you do, not something you understand. Good: "Get a rod and reel", "Tune the guitar", "Mix your first dough". Never start with an overview, history, mindset, ethics, or "understand X" step, and don't make step 1 a class or lesson.
-2. No standalone chapter for safety, ethics, etiquette, regulations, or mindset. If one genuinely matters, make it a single branch under the step where it applies (e.g. "Buy a fishing license" under the first outing).
+2. No standalone chapter for safety, ethics, etiquette, regulations, or mindset — put these as a single branch under the step where they apply (e.g. "Buy a fishing license" under the first outing). Exception: when a step moves into something that can physically hurt the person (bigger surf, deeper water, lead climbing, power tools, live current, foraging), attach a short "know your limits" branch to that step — what to check and when not to push on. Place it at the step where the risk appears, never as an opener.
 3. The first milestone is the real thing done badly, no later than the 3rd or 4th node: "Catch a fish", "Play a song all the way through", "Bake one loaf". Not a rehearsal, not a class.
 4. Labels: max 40 chars, sentence case, start with a verb where natural.
 5. Descriptions: one plain sentence, 12 words or fewer, saying what to do. Never explain why it matters — no "so that", "because", "which helps". Good: "Learn the improved clinch knot and the surgeon's knot." Bad: "Learn a few reliable knots so you can rig confidently on the water."
@@ -32,7 +32,7 @@ Rules:
 6. Honor the user's request directly — if they ask to go deeper on something, add depth; if they ask for a new area, add that area; if they ask for the next steps after the roadmap, continue past the current ending.
 7. Keep it focused — add roughly 3-10 new nodes, not a whole second roadmap, unless the request clearly calls for more.
 8. Actions: exactly one resource per node. Default to a YouTube search phrase ("YouTube: advanced soldering") or a Wikipedia page. Use a direct URL only when it is the canonical page for that exact node. Courses only when one is universally referenced. Milestones: action null unless there is a genuinely useful link.
-9. No standalone safety, ethics, or mindset steps. If the additions form a natural new checkpoint, end with a concrete, grounded milestone — a specific tangible thing you'd actually do, not a vague aspirational step.`;
+9. No standalone safety, ethics, or mindset steps — but if the new nodes push into something that can physically hurt the person, attach a short "know your limits" branch to the step where that risk appears. If the additions form a natural new checkpoint, end with a concrete, grounded milestone — a specific tangible thing you'd actually do, not a vague aspirational step.`;
 }
 
 export function buildExtendUserPrompt(
